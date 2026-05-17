@@ -109,3 +109,13 @@ export const updateAddress = async ({ id, data }: { id: string; data: Address })
   const response = await api.patch(`/api/addresses/${id}`, data);
   return response.data;
 };
+
+export const forgotPassword = async (email: string) => {
+  const { data } = await api.post("/api/auth/forgot-password", { email });
+  return data;
+};
+
+export const resetPassword = async (payload: { email: string; token: string; newPassword: string }) => {
+  const { data } = await api.post("/api/auth/reset-password", payload);
+  return data;
+};

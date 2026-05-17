@@ -77,7 +77,7 @@ const LoginForm = () => {
 
                     <div className="flex items-center justify-between">
                         <Link
-                            href="#"
+                            href="/auth/forgot-password"
                             className="text-xs text-muted-foreground hover:text-aqua transition-colors"
                         >
                             {t("forgotPassword")}

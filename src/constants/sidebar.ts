@@ -15,6 +15,7 @@ import {
     type LucideIcon,
     HardHat,
     Folder,
+    Flag,
 } from 'lucide-react';
 
 export type SidebarLabel =
@@ -29,7 +30,8 @@ export type SidebarLabel =
     | 'coupon codes'
     | 'financial transfers'
     | 'brand'
-    | 'stock';
+    | 'stock'
+    | 'reports';
 
 export interface MenuItem {
     title: string;
@@ -48,6 +50,7 @@ export const sidebarMenu: MenuItem[] = [
     { title: "financialTransfers", icon: DollarSign, path: "/admin/financial-transfers", label: "financial transfers" },
     { title: "brand", icon: Building, path: "/admin/brand", label: "brand" },
     { title: "constructionBasket", icon: HardHat, path: "/admin/construction-basket", label: "construction-basket" },
+    // { title: "reports", icon: Flag, path: "/admin/reports", label: "reports" },
     // { title: "category", icon: Folder, path: "/admin/category", label: "..." },
 
     // Products

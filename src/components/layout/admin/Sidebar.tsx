@@ -83,7 +83,7 @@ export default function Sidebar({ className }: { className?: string }) {
 
   const mainMenuLabels = new Set([
     "dashboard", "orders", "users", "suppliers",
-    "coupon codes", "financial transfers", "brand", "construction-basket",
+    "coupon codes", "financial transfers", "brand", "construction-basket", "reports",
   ]);
 
   const productsMenuLabels = new Set(["products", "stock", "reviews"]);

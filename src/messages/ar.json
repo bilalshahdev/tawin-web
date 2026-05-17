@@ -603,7 +603,16 @@
     "countryField": "الدولة",
     "reports": "التقارير",
     "report": "تقرير",
-    "noReportsAvailable": "لا توجد تقارير متاحة"
+    "noReportsAvailable": "لا توجد تقارير متاحة",
+    "forgotPasswordTitle": "نسيت كلمة المرور",
+    "forgotPasswordDescription": "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
+    "sendResetLink": "إرسال رابط الإعادة",
+    "checkEmailDescription": "تم إرسال تعليمات إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد.",
+    "resetPasswordTitle": "إعادة تعيين كلمة المرور",
+    "resetPasswordDescription": "أدخل كلمة مرورك الجديدة أدناه.",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "resetToken": "رمز الإعادة (من بريدك الإلكتروني)"
   },
   "confirm": {
     "logout": {
@@ -696,7 +705,8 @@
       "expiryDate": "تاريخ الانتهاء",
       "customer": "العميل",
       "action": "الإجراء",
-      "totalAmount": "إجمالي المبلغ"
+      "totalAmount": "إجمالي المبلغ",
+      "message": "الرسالة"
     },
     "search": {
       "noData": "لا توجد بيانات"

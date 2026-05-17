@@ -603,7 +603,16 @@
     "daysAgo": "{count}d ago",
     "reports": "Reports",
     "report": "Report",
-    "noReportsAvailable": "No reports available"
+    "noReportsAvailable": "No reports available",
+    "forgotPasswordTitle": "Forgot Password",
+    "forgotPasswordDescription": "Enter your email address and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "checkEmailDescription": "Password reset instructions have been sent to your email. Please check your inbox.",
+    "resetPasswordTitle": "Reset Password",
+    "resetPasswordDescription": "Enter your new password below.",
+    "confirmNewPassword": "Confirm New Password",
+    "backToLogin": "Back to Login",
+    "resetToken": "Reset Token (from your email)"
   },
   "confirm": {
     "logout": {
@@ -697,7 +706,8 @@
       "expiryDate": "Expiry Date",
       "customer": "Customer",
       "action": "Action",
-      "totalAmount": "Total Amount"
+      "totalAmount": "Total Amount",
+      "message": "Message"
     },
     "search": {
       "noData": "No data found"

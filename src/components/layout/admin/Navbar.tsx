@@ -36,7 +36,7 @@ export default function Navbar() {
             {/* Report */}
             {
               !isStaff && (
-                <Link href="/admin/report" className="relative cursor-pointer shrink-0">
+                <Link href="/admin/reports" className="relative cursor-pointer shrink-0">
                   <AiOutlineFileText size={24} className="text-gray-700" />
                 </Link>
               )

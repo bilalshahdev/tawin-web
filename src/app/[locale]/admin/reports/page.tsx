@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useGetAdminReport } from "@/hooks/useContact";
+import { useGetAdminReport, useDeleteAdminReport } from "@/hooks/useContact";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Calendar, Loader2 } from "lucide-react";
+import { FileText, Calendar, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Pagination } from "@/components/Pagination";
+import ConfirmDialog from "@/components/dialog/ConfirmDialog";
 
 type Report = {
   _id: string;
@@ -19,15 +20,16 @@ type Report = {
   updatedAt: string;
 };
 
-export default function AdminReportPage() {
+export default function AdminReportsPage() {
   const t = useTranslations("translation");
+  const tConfirm = useTranslations("confirm");
   const { data, isLoading, error } = useGetAdminReport();
+  const { mutate: deleteReport, isPending: isDeleting } = useDeleteAdminReport();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-console.log(data)
+
   const reportData: Report[] = data?.data ?? [];
 
-  // Pagination logic using API meta if available
   const totalDocs = data?.meta?.totalDocs ?? reportData.length;
   const totalPages = Math.ceil(totalDocs / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -71,10 +73,32 @@ console.log(data)
               className="hover:shadow-lg transition-shadow border"
             >
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-aqua" />
-                  {t("report")} #{startIndex + index + 1}
-                </CardTitle>
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-aqua shrink-0" />
+                    {t("report")} #{startIndex + index + 1}
+                  </CardTitle>
+
+                  <ConfirmDialog
+                    title={tConfirm("delete.title", { value: t("report") })}
+                    description={tConfirm("delete.description", { value: t("report") })}
+                    variant="destructive"
+                    loading={isDeleting}
+                    onConfirm={(closeDialog) => {
+                      deleteReport(report._id, {
+                        onSuccess: () => closeDialog(),
+                      });
+                    }}
+                    asChild
+                  >
+                    <button
+                      className="text-slate-400 hover:text-red-500 transition-colors p-1.5 rounded-md hover:bg-red-50 cursor-pointer shrink-0"
+                      title={t("delete")}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </ConfirmDialog>
+                </div>
                 <p className="text-sm text-gray-500">{report.user.email}</p>
               </CardHeader>
 

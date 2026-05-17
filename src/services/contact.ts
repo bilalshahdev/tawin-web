@@ -23,3 +23,8 @@ export const getAdminReport = async (): Promise<any> => {
   const { data } = await api.get("/api/reports");
   return data;
 };
+
+export const deleteAdminReport = async (id: string): Promise<any> => {
+  const { data } = await api.delete(`/api/reports/${id}`);
+  return data;
+};
