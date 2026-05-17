@@ -37,6 +37,7 @@ const Dashboard = () => {
       change: (stats?.totalUsers?.growth || "0") + "%",
       changeLabel: { en: "Users", ar: "المستخدمين" },
       changeType: "increase" as const,
+      link : "/admin/users"
     },
     {
       title: { en: "Total Orders", ar: "إجمالي الطلبات" },
@@ -45,6 +46,7 @@ const Dashboard = () => {
       change: (stats?.totalOrders?.growth || "0") + "%",
       changeLabel: { en: "Order", ar: "طلب" },
       changeType: "increase" as const,
+      link : "/admin/orders"
     },
     {
       title: { en: "Total Sales", ar: "إجمالي المبيعات" },
@@ -53,6 +55,7 @@ const Dashboard = () => {
       change: (stats?.totalSales?.growth || "0") + "%",
       changeLabel: { en: "Sales", ar: "المبيعات" },
       changeType: "increase" as const,
+      link : "/admin/financial-transfers"
     },
   ];
 
@@ -73,7 +76,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {statsData.map((stat, index) => (
-          <StatsCard key={index} data={stat} isHome={true} />
+          <StatsCard key={index} data={stat} isHome={true} link={stat.link}  />
         ))}
       </div>
 

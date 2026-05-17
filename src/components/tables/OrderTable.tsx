@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { useUpdateOrderStatus } from "@/hooks/useOrder";
 import { useSettings } from "@/hooks/useSettings";
 import { RootState } from "@/store/store";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 interface OrderTableProps {
   data: any[];
@@ -170,10 +171,10 @@ const OrderTable = ({ data, pagination, isLoading, page, setPage, onDelete, isDe
         <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 relative overflow-hidden rounded shrink-0 bg-gray-100">
-              <Image src={firstItem?.photo} alt={firstItem?.title[locale] || ""} fill className="object-cover" />
+              <Image src={firstItem?.photo} alt={getLocalizedText(firstItem?.title, locale) || ""} fill className="object-cover" />
             </div>
             <span className="text-sm font-medium line-clamp-1">
-              {firstItem?.title[locale]}
+              {getLocalizedText(firstItem?.title, locale)}
             </span>
           </div>
         </TableCell>

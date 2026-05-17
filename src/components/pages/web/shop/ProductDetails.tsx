@@ -12,6 +12,7 @@ import { useProductBySlug } from "@/hooks/useProducts"
 import { useProductReviews } from "@/hooks/useReviews"
 import ProductDetailsSkeleton from "@/components/skeletons/ProductDetailsSkeleton"
 import ProductError from "@/components/common/ProductError"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 interface ProductDetailsProps {
     params: string
@@ -41,7 +42,7 @@ const ProductDetails = ({ params }: ProductDetailsProps) => {
                     items={[
                         { title: t("home"), href: "/home" },
                         { title: t("shop"), href: "/shop" },
-                        { title: product.title[locale], href: `#` },
+                        { title: getLocalizedText(product.title, locale), href: `#` },
                     ]}
                 />
                 <Button
@@ -55,7 +56,7 @@ const ProductDetails = ({ params }: ProductDetailsProps) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <ProductImageGallery
-                    images={product?.images || []}
+                    images={[product.photo, ...(product.images || [])]}
                     isNew={product.isNewArrival || false}
                     discount={product.discount}
                 />
@@ -68,7 +69,7 @@ const ProductDetails = ({ params }: ProductDetailsProps) => {
             <ProductDescription
                 productKey={product._id}
                 productCode={product.slug}
-                category={product?.category?.name?.[locale]}
+                category={getLocalizedText(product?.category?.name, locale)}
             />
 
             <Reviews product={product} reviews={reviewData || []} isReviewsLoading={isReviewLoading} />

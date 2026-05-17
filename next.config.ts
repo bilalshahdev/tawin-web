@@ -3,12 +3,13 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
     images: {
+        dangerouslyAllowLocalIP: true,
         remotePatterns: [
             {
                 protocol: "https",
                 hostname: "images.unsplash.com",
                 port: "",
-                pathname: "/**",
+                pathname: "/",
             },
            {
                 protocol: "http",

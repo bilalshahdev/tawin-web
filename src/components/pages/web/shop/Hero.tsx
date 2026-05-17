@@ -6,6 +6,7 @@ import Breadcrumb from '@/components/ui/breadcrumb'
 import Image from '@/components/MyImage'
 import { useSettings } from "@/hooks/useSettings"
 import { HeroSkeleton } from "@/components/skeletons/HeroSkeleton"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 interface HeroProps {
     activeCategory: string | null;
@@ -24,8 +25,11 @@ const Hero = ({ activeCategory, isLoading }: HeroProps) => {
         return <HeroSkeleton variant="shop" />
     }
 
-    const title = categoryData?.name[locale] || settingsData?.header?.shop?.text?.[locale];
-    const subTitle = categoryData?.description[locale] || "";
+    const title =
+        getLocalizedText(categoryData?.name, locale) ||
+        getLocalizedText(settingsData?.header?.shop?.text, locale)
+
+    const subTitle = getLocalizedText(categoryData?.description, locale)
     const backgroundImage = categoryData?.thumbnail || settingsData?.header?.shop?.image;
 
     return (

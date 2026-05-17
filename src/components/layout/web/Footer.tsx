@@ -7,8 +7,8 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useSettings } from "@/hooks/useSettings";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
-// WhatsApp icon (lucide doesn't have it, use inline SVG)
 function WhatsAppIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -37,10 +37,10 @@ export default function Footer() {
             {/* 1. Brand Section */}
             <div className="space-y-4 md:w-1/3">
               <h2 className="text-base font-bold text-[#2D3E50]">
-                {settings?.businessName?.[locale]}
+                {getLocalizedText(settings?.businessName, locale)}
               </h2>
               <p className="text-[13px] text-gray-500 max-w-xs leading-relaxed">
-                {settings?.tagline?.[locale]}
+                {getLocalizedText(settings?.tagline, locale)}
               </p>
               <div className="flex items-center gap-4 pt-2">
                 <Link
@@ -159,11 +159,11 @@ export default function Footer() {
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium text-white">
-              {settings?.businessName?.[locale]}
+              {getLocalizedText(settings?.businessName, locale)}
             </span>
             <div className="h-5 w-px bg-white/30" />
             <span className="text-sm font-medium text-white">
-              {settings?.tagline?.[locale]}
+              {getLocalizedText(settings?.tagline, locale)}
             </span>
           </div>
           <nav className="flex flex-wrap items-center gap-6 md:gap-8">

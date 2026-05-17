@@ -42,32 +42,32 @@ const FinancialTransfers = () => {
 
   const transferStats = [
     {
-      title: { en: "Transfers in Progress", ar: "transfer_transfer" },
+      title: { en: "Transfers in Progress", ar: "التحويلات الجارية" },
       value: statsData?.find((s: any) => s.title === "Transfers in Progress")?.value ?? 0,
       trend: `${statsData?.find((s: any) => s.title === "Transfers in Progress")?.change?.percentage ?? 0}%`,
       isUp: statsData?.find((s: any) => s.title === "Transfers in Progress")?.change?.type === "increase",
-      footerLabel: { en: "Last 7 Days", ar: "transfer_7_transfer" },
+      footerLabel: { en: "Last 7 Days", ar: "آخر 7 أيام" },
     },
     {
-      title: { en: "Total Transfers", ar: "transfer_transfer" },
+      title: { en: "Total Transfers", ar: "إجمالي التحويلات" },
       value: statsData?.find((s: any) => s.title === "Total Transfers")?.value ?? 0,
       trend: `${statsData?.find((s: any) => s.title === "Total Transfers")?.change?.percentage ?? 0}%`,
       isUp: statsData?.find((s: any) => s.title === "Total Transfers")?.change?.type === "increase",
-      footerLabel: { en: "Last 7 Days", ar: "transfer_7_transfer" },
+      footerLabel: { en: "Last 7 Days", ar: "آخر 7 أيام" },
     },
     {
-      title: { en: "Completed Transfers", ar: "transfer_transfer" },
+      title: { en: "Completed Transfers", ar: "التحويلات المكتملة" },
       value: statsData?.find((s: any) => s.title === "Completed Transfers")?.value ?? 0,
       trend: `${statsData?.find((s: any) => s.title === "Completed Transfers")?.change?.percentage ?? 0}%`,
       isUp: statsData?.find((s: any) => s.title === "Completed Transfers")?.change?.type === "increase",
-      footerLabel: { en: "Last 7 Days", ar: "transfer_7_transfer" },
+      footerLabel: { en: "Last 7 Days", ar: "آخر 7 أيام" },
     },
     {
-      title: { en: "Cancelled Transfers", ar: "transfer_transfer" },
+      title: { en: "Cancelled Transfers", ar: "التحويلات الملغاة" },
       value: statsData?.find((s: any) => s.title === "Cancelled Transfers")?.value ?? 0,
       trend: `${statsData?.find((s: any) => s.title === "Cancelled Transfers")?.change?.percentage ?? 0}%`,
       isUp: statsData?.find((s: any) => s.title === "Cancelled Transfers")?.change?.type === "increase",
-      footerLabel: { en: "Last 7 Days", ar: "transfer_7_transfer" },
+      footerLabel: { en: "Last 7 Days", ar: "آخر 7 أيام" },
     },
   ];
 

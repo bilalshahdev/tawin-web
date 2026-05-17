@@ -108,11 +108,11 @@ export default function AddAddressDialog({
 
             {/* Country */}
             <div className="space-y-1.5">
-              <Label>{t("country")}</Label>
+              <Label>{t("countryField")}</Label>
               <Input
                 variant="default"
                 className="rounded-md h-10"
-                placeholder="Pakistan"
+                placeholder="Iraq"
                 error={!!errors.country}
                 errorMessage={errors.country?.message}
                 {...register("country")}

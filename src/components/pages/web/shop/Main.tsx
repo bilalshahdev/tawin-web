@@ -115,7 +115,6 @@ const Shop = () => {
               ))}
             </div>
 
-            {/* Skeleton loader appears below existing products while next page loads */}
             {isLoadingMore && <ProductSkeleton viewMode={viewMode} />}
 
             {hasMore && !isLoadingMore && (

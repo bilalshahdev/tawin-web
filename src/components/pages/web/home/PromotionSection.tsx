@@ -12,8 +12,7 @@ export default function PromotionSection() {
         <div className="w-full overflow-hidden">
 
             {/* 1. Limited Offers Section */}
-            <section className="flex flex-col lg:flex-row min-h-[500px]">
-                {/* Left: Lifestyle Image */}
+            {/* <section className="flex flex-col lg:flex-row min-h-[500px]">
                 <div className="w-full lg:w-1/2 relative min-h-[500px]">
                     <Image
                         src="/promotion.png"
@@ -23,7 +22,6 @@ export default function PromotionSection() {
                     />
                 </div>
 
-                {/* Right: Offer Details */}
                 <div className="w-full lg:w-1/2 bg-[#141718] flex flex-col justify-center p-8 md:p-16 lg:p-24 space-y-4 text-left rtl:text-right">
                     <span className="text-aqua font-semibold text-sm uppercase tracking-wider">
                         {t("limitedOffers")}
@@ -35,7 +33,6 @@ export default function PromotionSection() {
                         {t("offerSubtitle")}
                     </p>
 
-                    {/* Countdown Timer */}
                     <div className="space-y-4">
                         <p className="text-gray-400 text-xs">
                             {t("offerEndsIn")}:
@@ -66,7 +63,7 @@ export default function PromotionSection() {
                         {t("shopNow")}
                     </Button>
                 </div>
-            </section>
+            </section> */}
 
             {/* 2. App Download Section */}
             <section className="max-w-7xl mx-auto px-4 py-12">
@@ -74,7 +71,7 @@ export default function PromotionSection() {
                     <div className="w-full md:w-1/2 hidden sm:flex justify-end">
                         <div className="relative w-64 h-[350px]">
                             <Image
-                                src="/mob.jpg"
+                                src="/mobe.jpg"
                                 alt="App Mockup"
                                 fill
                                 className="object-contain"

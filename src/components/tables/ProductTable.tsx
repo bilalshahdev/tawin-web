@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import ConfirmDialog from "../dialog/ConfirmDialog";
 import { useDeleteProduct } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 interface ProductTableProps {
   activeTab: string;
@@ -68,12 +69,12 @@ const ProductTable = ({
           <div className="h-8 w-8 relative overflow-hidden rounded-md border">
             <Image
               src={item?.photo || ""}
-              alt={item.title[locale]}
+              alt={getLocalizedText(item.title, locale) || ""}
               fill
               className="object-cover"
             />
           </div>
-          <span className="font-medium text-sm capitalize">{item.title[locale]}</span>
+          <span className="font-medium text-sm capitalize">{getLocalizedText(item.title, locale)}</span>
         </div>
       </TableCell>
       <TableCell className="text-sm font-medium cursor-pointer" onClick={() => handleNavigate(locale, item.slug)}>
@@ -103,7 +104,7 @@ const ProductTable = ({
             {canDelete && (
               <ConfirmDialog
                 title="Delete Product"
-                description={`Are you sure you want to delete ${item.title[locale]}?`}
+                description={`Are you sure you want to delete ${getLocalizedText(item.title, locale)}?`}
                 variant="destructive"
                 loading={isDeleting}
                 onConfirm={(close) => {

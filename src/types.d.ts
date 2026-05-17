@@ -20,9 +20,11 @@ interface CardProps {
   footerValue?: string;
   footerLabel?: LocalizedString;
 }
+
 interface LocalizedString {
-  en: string;
-  ar: string;
+  en?: string;
+  ar?: string;
+  [key: string]: string | undefined;
 }
 interface Subcategory {
   _id: string | number;
@@ -67,5 +69,14 @@ interface AddStockFormData {
   deliveryDate: string;
   invoiceNumber?: string;
   notes?: string;
+}
+
+interface UserData {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  role?: string;
+  profileImage?: string;
 }
 

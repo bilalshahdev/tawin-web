@@ -4,7 +4,6 @@ import { useState } from "react"
 import { Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import CountdownTimer from "./CountdownTimer"
 import ColorSelector from "./ColorSelector"
 import QuantitySelector from "./QuantitySelector"
 import StarRating from "@/components/StarRating"
@@ -15,6 +14,7 @@ import { useToggleFavorite, useFavorites } from "@/hooks/useFavorite"
 import { cn } from "@/lib/utils"
 import { LoginDialog } from "@/components/dialog/LoginDialog"
 import { useSettings } from "@/hooks/useSettings"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 interface ProductInfoProps {
   product: Product
@@ -96,8 +96,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <span className="text-sm text-muted-foreground">{product.reviewCount} {t("reviews")}</span>
       </div>
 
-      <h1 className="text-2xl font-semibold text-foreground capitalize">{title[locale]}</h1>
-      <p className="text-sm text-muted-foreground leading-relaxed first-letter:uppercase">{description?.[locale]}</p>
+      <h1 className="text-2xl font-semibold text-foreground capitalize">{getLocalizedText(product.title, locale)}</h1>
+      <p className="text-sm text-muted-foreground leading-relaxed first-letter:uppercase">{getLocalizedText(product.description, locale)}</p>
 
       <Separator />
 
@@ -113,7 +113,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {product.variant && (
         <div className="flex flex-col gap-2">
           <span className="text-xs text-muted-foreground">{t("variant")}</span>
-          <span className="text-sm text-foreground">{product.variant}</span>
+          <span className="text-sm text-foreground capitalize">{product.variant}</span>
         </div>
       )}
 

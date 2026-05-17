@@ -39,13 +39,6 @@ const FinancialTransfers = ({data, currencySymbol}: {data: any, currencySymbol?:
         <CardTitle>
           {t("financialTransfers")}
         </CardTitle>
-        {/* <Button
-          variant="primary"
-          size="sm"
-          className="w-24"
-        >
-          {t("filter")}
-        </Button> */}
       </CardHeader>
 
       <CardContent>

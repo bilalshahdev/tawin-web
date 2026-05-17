@@ -8,6 +8,7 @@ import Image from "@/components/MyImage"
 import { useSettings } from "@/hooks/useSettings"
 import { useLocale } from "next-intl"
 import HtmlContent from "@/components/common/HtmlContent"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 export default function ContactUs() {
   const t = useTranslations("translation");
@@ -56,7 +57,7 @@ export default function ContactUs() {
             ) : (
               <>
                 <h2 className="text-3xl font-semibold">{t("aboutUs")}</h2>
-                <HtmlContent content={settings?.pages?.about?.[locale]} />
+                <HtmlContent content={getLocalizedText(settings?.pages?.about, locale)} />
                 <Link
                   href="/shop"
                   className="text-sm font-semibold border-b-2 border-black w-fit pb-1 hover:text-gray-600 transition-colors">

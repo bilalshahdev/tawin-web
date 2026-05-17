@@ -10,6 +10,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useDeleteReview } from "@/hooks/useReviews";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 const ReviewsTable = ({
   data,
@@ -69,7 +70,7 @@ const ReviewsTable = ({
       </TableCell>
       <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
         {item.product
-          ? <span className="text-sm text-gray-700">{item.product.title?.[locale] || item.product.title?.en}</span>
+          ? <span className="text-sm text-gray-700">{getLocalizedText(item.product.title, locale)}</span>
           : <span className="text-sm text-gray-400">—</span>
         }
       </TableCell>

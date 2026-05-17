@@ -16,6 +16,7 @@ import { useFavorites, useToggleFavorite } from "@/hooks/useFavorite"
 import { LoginDialog } from "../dialog/LoginDialog"
 import { SpinnerLoader } from "../common/SpinnerLoader"
 import { useSettings } from "@/hooks/useSettings"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 export function ProductCard({
     _id,
@@ -79,7 +80,7 @@ export function ProductCard({
                         className="group relative aspect-square w-full overflow-hidden cursor-pointer">
                         <Image
                             src={photo}
-                            alt={locale === "en" ? title.en : title.ar}
+                            alt={getLocalizedText(title, locale)}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
@@ -119,7 +120,7 @@ export function ProductCard({
                         <StarRating rating={rating} />
 
                         <Link href={`/shop/${slug}`} className="line-clamp-1 text-sm font-medium text-foreground cursor-pointer capitalize">
-                            {locale === "en" ? title.en : title.ar}
+                            {getLocalizedText(title, locale)}
                         </Link>
 
                         <div className="mt-0.5 flex items-center gap-2">

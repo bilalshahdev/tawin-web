@@ -17,6 +17,7 @@ import { ShopDropdown } from "@/components/ShopDropdown"
 import { useCart } from "@/hooks/useCart"
 import { useSettings } from "@/hooks/useSettings"
 import { useQueryClient } from "@tanstack/react-query"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 export default function Navbar() {
   const t = useTranslations("translation");
@@ -85,7 +86,7 @@ export default function Navbar() {
               </div>
               {!isMain && (
                 <h2 className="text-sm sm:text-base font-semibold text-[#2D3E50]">
-                  {settings?.businessName?.[locale]}
+                  {getLocalizedText(settings?.businessName, locale)}
                 </h2>
               )}
             </Link>

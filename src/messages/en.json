@@ -179,7 +179,7 @@
     "privateSector": "Private Sector",
     "government": "Government",
     "monthlyIncome": "Monthly Income",
-    "incomePlaceholder": "e.g. 1,000,000 IQD",
+    "incomePlaceholder": "e.g. 1,000,000 USD",
     "residenceCard": "Residence Card",
     "uploadResidence": "Upload Residence Card",
     "unifiedCard": "Unified Card",
@@ -269,6 +269,7 @@
     "footerMotto": "More than just construction materials.",
     "addressTitle": "Address",
     "country": "Iraq",
+    "countryField": "Country",
     "pagesTitle": "Pages",
     "copyrightText": "Copyright © 2026 Ta3awin. All rights reserved",
     "completePayment": "Complete Payment",
@@ -599,7 +600,10 @@
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago"
+    "daysAgo": "{count}d ago",
+    "reports": "Reports",
+    "report": "Report",
+    "noReportsAvailable": "No reports available"
   },
   "confirm": {
     "logout": {

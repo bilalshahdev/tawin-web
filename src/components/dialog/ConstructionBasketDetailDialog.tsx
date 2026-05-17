@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSettings } from "@/hooks/useSettings";
+import { Label } from "../ui/label";
 
 interface ConstructionBasketDetailDialogProps {
   basket: any;
@@ -37,19 +38,19 @@ const ConstructionBasketDetailDialog = ({ basket, open, onClose }: ConstructionB
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('fullName')}</label>
+                <Label>{t('fullName')}</Label>
                 <p className="font-semibold text-gray-900">{basket.constructionBasket?.fullRegistrationName}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('phoneNumber')}</label>
+                <Label>{t('phoneNumber')}</Label>
                 <p className="font-semibold text-gray-900" dir="ltr">{basket.constructionBasket?.phoneNumber}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('occupation')}</label>
+                <Label>{t('occupation')}</Label>
                 <p className="font-semibold text-gray-900">{basket.constructionBasket?.occupation}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('monthlyIncome')}</label>
+                <Label>{t('monthlyIncome')}</Label>
                 <p className="font-semibold text-gray-900">
                   {settings?.currencySymbol}{basket.constructionBasket?.monthlyIncome?.toLocaleString()}
                 </p>
@@ -66,19 +67,19 @@ const ConstructionBasketDetailDialog = ({ basket, open, onClose }: ConstructionB
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('propertyType')}</label>
+                <Label>{t('propertyType')}</Label>
                 <p className="font-semibold text-gray-900">{basket.constructionBasket?.propertyType}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('propertyArea')}</label>
+                <Label>{t('propertyArea')}</Label>
                 <p className="font-semibold text-gray-900">{basket.constructionBasket?.propertyArea}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('unifiedCard')}</label>
+                <Label>{t('unifiedCard')}</Label>
                 <p className="font-semibold text-gray-900">{basket.constructionBasket?.unifiedCard}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">{t('residenceCard')}</label>
+                <Label>{t('residenceCard')}</Label>
                 <p className="font-semibold text-gray-900">{basket.constructionBasket?.residenceCard}</p>
               </div>
             </CardContent>

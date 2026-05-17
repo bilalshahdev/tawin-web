@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl"
 import Image from "@/components/MyImage"
 import { useUpdateCartQuantity, useRemoveFromCart } from "@/hooks/useCart"
 import { Product } from "@/types/product"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 interface CartItem {
     product: Product;
@@ -74,7 +75,7 @@ const OrderSummary = ({ cartItems, discount, currencySymbol }: OrderSummaryProps
                                             width={64}
                                             height={80}
                                             src={item.product.photo || ""}
-                                            alt={locale === "en" ? item.product.title.en : item.product.title.ar}
+                                            alt={getLocalizedText(item.product.title, locale)}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>

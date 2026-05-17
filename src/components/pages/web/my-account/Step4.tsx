@@ -9,6 +9,7 @@ import { useFavorites, useToggleFavorite } from "@/hooks/useFavorite";
 import { useAddToCart } from "@/hooks/useCart";
 import Link from "next/link";
 import { useSettings } from "@/hooks/useSettings";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 export default function FavoritesList() {
     const locale = useLocale() as "en" | "ar";
@@ -55,7 +56,7 @@ export default function FavoritesList() {
                              className="w-16 h-20 md:w-20 md:h-20 bg-gray-100 rounded-xl overflow-hidden shrink-0">
                                 <Image 
                                     src={item.product?.photo || "/placeholder-product.png"} 
-                                    alt={item.product?.title?.[locale] || ""} 
+                                    alt={getLocalizedText(item.product?.title, locale) || ""} 
                                     width={80} 
                                     height={80} 
                                     className="w-full h-full object-cover" 
@@ -63,7 +64,7 @@ export default function FavoritesList() {
                             </Link>
                             <div className="text-left">
                                 <p className="text-xs font-semibold text-gray-900 uppercase tracking-tight">
-                                    {item.product?.title?.[locale]}
+                                    {getLocalizedText(item.product?.title, locale)}
                                 </p>
                                 <p className="text-[10px] text-gray-400">
                                     {t("color")}: {t("black")}

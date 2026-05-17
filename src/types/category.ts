@@ -1,6 +1,7 @@
 export interface LocalizedString {
   en: string;
   ar: string;
+  [key: string]: string | undefined;
 }
 
 export interface Category {

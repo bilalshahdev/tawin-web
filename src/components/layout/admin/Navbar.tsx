@@ -1,6 +1,6 @@
 "use client"
 
-import { AiOutlineBell } from "react-icons/ai";
+import { AiOutlineBell, AiOutlineFileText } from "react-icons/ai";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -32,6 +32,15 @@ export default function Navbar() {
         <div className="flex items-center gap-3 md:gap-4">
           <div className="flex items-center gap-3 md:gap-4">
             <LanguageSwitcher />
+
+            {/* Report */}
+            {
+              !isStaff && (
+                <Link href="/admin/report" className="relative cursor-pointer shrink-0">
+                  <AiOutlineFileText size={24} className="text-gray-700" />
+                </Link>
+              )
+            }
 
             {/* Notification */}
             {

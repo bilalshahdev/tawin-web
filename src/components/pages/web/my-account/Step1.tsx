@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export default function AccountInfo() {
   const t = useTranslations("translation");
-  const { data: userProfile, isLoading,isFetching, refetch } = useUserProfile();
+  const { data: userProfile, isLoading, refetch } = useUserProfile();
   const {mutate: updateUserProfile,isPending: isUpdatingProfile} = useUpdateUserProfile();
 
   const {

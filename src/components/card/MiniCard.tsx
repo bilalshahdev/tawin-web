@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 const MiniCard = ({ data, isLoading }: { data: any[]; isLoading: boolean }) => {
   const locale = useLocale() as "en" | "ar";
@@ -32,7 +33,7 @@ const MiniCard = ({ data, isLoading }: { data: any[]; isLoading: boolean }) => {
       <>
         {Array.from({ length: 8 }).map((_, index) => (
           <Card key={index} className="border shadow-none bg-white">
-            <CardContent className="flex items-center justify-between" dir={locale === "ar" ? "rtl" : "ltr"}>
+            <CardContent className="flex items-center justify-between">
               <Skeleton className="h-4 w-20 rounded" />
               <Skeleton className="h-14 w-14 rounded-lg" />
             </CardContent>
@@ -52,15 +53,14 @@ const MiniCard = ({ data, isLoading }: { data: any[]; isLoading: boolean }) => {
         >
           <CardContent
             className="flex items-center justify-between"
-            dir={locale === "ar" ? "rtl" : "ltr"}
           >
             <span className="text-sm font-semibold text-gray-700 capitalize">
-              {item.name[locale]}
+              {getLocalizedText(item.name, locale)}
             </span>
             <div className="h-14 w-14 mr-2 relative overflow-hidden rounded-lg">
               <Image
                 src={item.thumbnail}
-                alt={item.name[locale]}
+                alt={getLocalizedText(item.name, locale)}
                 fill
                 className="object-contain"
               />

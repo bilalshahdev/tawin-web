@@ -6,8 +6,8 @@ import { useGetCategories } from "@/hooks/useCategories"
 import CategorySkeleton from "@/components/skeletons/CategorySkeleton";
 
 export default function ShopByCategory() {
-    const { data, isLoading, isError } = useGetCategories({ limit: 12, isAdmin: true });
-    const categoriesData = data?.data?.categories || [];
+    const { data, isLoading } = useGetCategories({ limit: 12, isAdmin: true });
+    const categoriesData = data?.data || [];
     const t = useTranslations("translation")
 
     return (
@@ -16,13 +16,13 @@ export default function ShopByCategory() {
                 {t("shopByCategory")}
             </h2>
 
-            {isError && (
-                <div className="text-center text-red-500 font-medium">
-                    {t("errorLoadingCategories")}
+            {categoriesData.length === 0 && (
+                <div className="text-center text-gray-400 font-medium -mt-8">
+                    {t("noDataFound")}
                 </div>
             )}
 
-            {!isError && (
+            {categoriesData.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-12 gap-x-6">
                     {isLoading
                         ? <CategorySkeleton />

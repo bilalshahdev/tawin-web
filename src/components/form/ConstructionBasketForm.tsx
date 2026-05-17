@@ -16,10 +16,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "../ui/button"
 import { useApplyForBasket } from "@/hooks/useBasket"
 import { ConstructionBasketSchema, ConstructionBasketType } from "@/validations/basket"
+import { useSettings } from "@/hooks/useSettings"
 
 const ConstructionBasketForm = () => {
     const t = useTranslations("translation");
     const { mutate: applyForBasket, isPending } = useApplyForBasket();
+    const { data: settings } = useSettings();
 
     const {
         register,
@@ -116,7 +118,7 @@ const ConstructionBasketForm = () => {
                     <div className="space-y-2">
                         <Label>{t("monthlyIncome")}</Label>
                         <Input
-                            placeholder={t("incomePlaceholder")}
+                            placeholder={`e.g. 1,000,000 ${settings?.currencySymbol || 'USD'}`}
                             className={inputStyles}
                             type="number"
                             {...register("monthlyIncome", { valueAsNumber: true })}

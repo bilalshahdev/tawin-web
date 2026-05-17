@@ -51,9 +51,9 @@ const CreateStaffSchema = z.object({
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Valid email is required"),
     phone: z.string().optional(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     permissions: z.array(z.object({
-        module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock"]),
+        module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "categories", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock"]),
         operations: z.array(z.enum(["get", "post", "patch", "put", "delete"]))
     })).optional(),
 });
@@ -63,7 +63,7 @@ const EditStaffSchema = z.object({
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Valid email is required"),
     phone: z.string().optional(),
-    password: z.union([z.string().length(0), z.string().min(6, "Password must be at least 6 characters")]).optional(),
+    password: z.union([z.string().length(0), z.string().min(8, "Password must be at least 8 characters")]).optional(),
     permissions: z.array(z.object({
         module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "categories", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock"]),
         operations: z.array(z.enum(["get", "post", "patch", "put", "delete"]))

@@ -10,7 +10,8 @@ import Image from "@/components/MyImage"
 
 export function ProductImageGallery({ images, isNew, discount }: any) {
   const t = useTranslations("translation");
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent] = useState(0);
+  console.log(images)
 
   const prev = () => setCurrent((i) => (i - 1 + images.length) % images.length)
   const next = () => setCurrent((i) => (i + 1) % images.length)

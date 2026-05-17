@@ -12,19 +12,19 @@ export const getCategories = async (params?: { page?: number; limit?: number; is
   return data;
 };
 
-export const getCategoryById = async (id: string): Promise<Category> => {
+export const getCategoryById = async (id: string) => {
   const { data } = await api.get(`/api/categories/id/${id}`);
   return data.data;
 };
 
-export const createCategory = async (formData: FormData): Promise<Category> => {
+export const createCategory = async (formData: FormData) => {
   const { data } = await api.post("/api/categories", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;
 };
 
-export const updateCategory = async ({ id, formData }: { id: string; formData: FormData }): Promise<Category> => {
+export const updateCategory = async ({ id, formData }: { id: string; formData: FormData }) => {
   const { data } = await api.patch(`/api/categories/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });

@@ -11,6 +11,7 @@ import CategoryFormDialog from "@/components/dialog/CategoryFormDialog";
 import { useDeleteCategory } from "@/hooks/useCategories";
 import { Category } from "@/types/category";
 import ConfirmDialog from "../dialog/ConfirmDialog";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 const CategoryTable = ({ 
   data, 
@@ -61,13 +62,13 @@ const CategoryTable = ({
       </TableCell>
 
       <TableCell className="font-semibold text-slate-700 min-w-[150px] capitalize">
-        {item.name[locale]}
+        {getLocalizedText(item.name, locale)}
       </TableCell>
 
       <TableCell className="text-slate-500">
         {item.parentCategory ? (
           <span className="text-[11px] bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-            {item.parentCategory.name[locale]}
+            {getLocalizedText(item.parentCategory.name, locale)}
           </span>
         ) : (
           <span className="text-gray-300">—</span>

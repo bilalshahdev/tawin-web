@@ -12,6 +12,7 @@ import AddBrandDialog from "../dialog/AddBrandDialog";
 import { useLocale, useTranslations } from "next-intl";
 import MyImage from "../MyImage";
 import { useDeleteBrand } from "@/hooks/useBrand";
+import { getLocalizedText } from "@/utils/getLocalizedText";
 
 const BrandsTable = ({
   data,
@@ -76,7 +77,7 @@ const BrandsTable = ({
           {item.slug?.toUpperCase().substring(0, 8) || "N/A"}
         </TableCell>
         <TableCell className="font-medium cursor-pointer" onClick={() => handleRowClick(item)}>
-          {item.name[locale] || item.name['en']}
+          {getLocalizedText(item.name, locale)}
         </TableCell>
         <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
           {regDate}

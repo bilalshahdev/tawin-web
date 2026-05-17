@@ -12,6 +12,7 @@ import { WriteReviewButton, ReviewCard } from "./ReviewComponents"
 import { useLocale, useTranslations } from "next-intl"
 import { SpinnerLoader } from "@/components/common/SpinnerLoader"
 import WriteReviewDialog from "@/components/dialog/WriteReviewDialog"
+import { getLocalizedText } from "@/utils/getLocalizedText"
 
 export default function Reviews({ product, reviews, isReviewsLoading }: {
   product: any,
@@ -98,7 +99,7 @@ export default function Reviews({ product, reviews, isReviewsLoading }: {
 
       {activeTab === "product_info" && (
         <div className="text-gray-600 text-[15px] leading-relaxed">
-          {product?.description?.[locale] ?? "No description available."}
+          {getLocalizedText(product?.description, locale) ?? "No description available."}
         </div>
       )}
     </div>

@@ -106,12 +106,7 @@ const AdminSettingsPage = () => {
 
     return (
         <div className="space-y-6 p-4 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center border-b pb-4">
-                <h1 className="text-2xl font-bold text-slate-800">{t("appSettings")}</h1>
-                <Button onClick={handleSubmit(onSubmit)} variant="primary" disabled={isPending} className="w-40">
-                    {isPending ? <SpinnerLoader /> : <><Save className="mr-2 h-4 w-4" /> {t("saveChanges")}</>}
-                </Button>
-            </div>
+            <h1 className="text-2xl font-bold text-slate-700">{t("appSettings")}</h1>
 
             <FormProvider {...methods}>
                 <form className="space-y-10">
@@ -201,6 +196,12 @@ const AdminSettingsPage = () => {
                             />
                         </div>
                     </section>
+
+                    <div className="flex justify-end">
+                        <Button onClick={handleSubmit(onSubmit)} variant="primary" disabled={isPending} className="w-40 rounded-md">
+                            {isPending ? <SpinnerLoader /> : <><Save className="mr-2 h-4 w-4" /> {t("saveChanges")}</>}
+                        </Button>
+                    </div>
 
                 </form>
             </FormProvider>
