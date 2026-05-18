@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { submitContactForm, ContactFormData, AdminReportData, submitAdminReport, getAdminReport, deleteAdminReport } from "@/services/contact";
+import { submitContactForm, ContactFormData, AdminReportData, submitAdminReport, getAdminReport, deleteAdminReport, getAdminContacts, deleteAdminContact } from "@/services/contact";
 import { toast } from "sonner";
 
 export const useSubmitContactForm = () => {
@@ -30,6 +30,27 @@ export const useGetAdminReport = () => {
   return useQuery({
     queryKey: ["adminReport"],
     queryFn: () => getAdminReport(),
+  });
+};
+
+export const useGetAdminContacts = () => {
+  return useQuery({
+    queryKey: ["adminContacts"],
+    queryFn: () => getAdminContacts(),
+  });
+};
+
+export const useDeleteAdminContact = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAdminContact,
+    onSuccess: () => {
+      toast.success("Contact deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["adminContacts"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to delete contact.");
+    },
   });
 };
 

@@ -612,7 +612,8 @@
     "resetPasswordDescription": "Enter your new password below.",
     "confirmNewPassword": "Confirm New Password",
     "backToLogin": "Back to Login",
-    "resetToken": "Reset Token (from your email)"
+    "resetToken": "Reset Token (from your email)",
+    "promotional": "Promotional"
   },
   "confirm": {
     "logout": {

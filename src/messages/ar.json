@@ -612,7 +612,8 @@
     "resetPasswordDescription": "أدخل كلمة مرورك الجديدة أدناه.",
     "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
     "backToLogin": "العودة لتسجيل الدخول",
-    "resetToken": "رمز الإعادة (من بريدك الإلكتروني)"
+    "resetToken": "رمز الإعادة (من بريدك الإلكتروني)",
+    "promotional": "ترويجي"
   },
   "confirm": {
     "logout": {

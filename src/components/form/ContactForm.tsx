@@ -27,6 +27,7 @@ const ContactForm = ({ isHome }: { isHome?: boolean }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -38,7 +39,7 @@ const ContactForm = ({ isHome }: { isHome?: boolean }) => {
   });
 
   const onSubmit = (data: ContactFormData) => {
-    mutate(data);
+    mutate(data, { onSuccess: () => reset() });
   };
 
   return (

@@ -24,6 +24,7 @@ export interface CouponFormData {
   appliesTo: "all" | "category" | "product";
   categories?: string[];
   products?: string[];
+  isPromotional?: boolean;
 }
 
 export interface CouponStats {

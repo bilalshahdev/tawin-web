@@ -6,8 +6,11 @@ export const getCouponsAdmin = async (params?: PaginationParams) => {
   return data;
 };
 
-export const createCouponAdmin = async (formData: CouponFormData): Promise<Coupon> => {
-  const { data } = await api.post("/api/coupons/admin", formData);
+export const createCouponAdmin = async (formData: CouponFormData | FormData): Promise<Coupon> => {
+  const isFormData = formData instanceof FormData;
+  const { data } = await api.post("/api/coupons/admin", formData, {
+    headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
+  });
   return data;
 };
 
@@ -16,8 +19,11 @@ export const getCouponStatsAdmin = async (): Promise<CouponStats> => {
   return data.data;
 };
 
-export const updateCouponAdmin = async (id: string, formData: Partial<CouponFormData>): Promise<Coupon> => {
-  const { data } = await api.patch(`/api/coupons/admin/${id}`, formData);
+export const updateCouponAdmin = async (id: string, formData: Partial<CouponFormData> | FormData): Promise<Coupon> => {
+  const isFormData = formData instanceof FormData;
+  const { data } = await api.patch(`/api/coupons/admin/${id}`, formData, {
+    headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
+  });
   return data;
 };
 

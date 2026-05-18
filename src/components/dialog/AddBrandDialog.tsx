@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useTranslations } from "next-intl";
 import { useForm, FormProvider } from "react-hook-form";
 import { useCreateBrand, useUpdateBrand } from "@/hooks/useBrand";
@@ -41,10 +42,12 @@ export default function AddBrandDialog({
     defaultValues: {
       name: { en: "", ar: "" },
       description: { en: "", ar: "" },
+      isActive: true,
     },
   });
 
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, watch, setValue } = methods;
+  const isActive = watch("isActive");
 
   useEffect(() => {
     if (open) {
@@ -52,11 +55,12 @@ export default function AddBrandDialog({
         reset({
           name: { en: brand.name?.en || "", ar: brand.name?.ar || "" },
           description: { en: brand.description?.en || "", ar: brand.description?.ar || "" },
+          isActive: brand.isActive ?? true,
         });
         setPreviewUrl(brand.image || null);
         setFileName(null);
       } else {
-        reset({ name: { en: "", ar: "" }, description: { en: "", ar: "" } });
+        reset({ name: { en: "", ar: "" }, description: { en: "", ar: "" }, isActive: true });
         setPreviewUrl(null);
         setFileName(null);
       }
@@ -83,6 +87,7 @@ export default function AddBrandDialog({
     formData.append("name[ar]", data.name.ar);
     formData.append("description[en]", data.description.en);
     formData.append("description[ar]", data.description.ar);
+    formData.append("isActive", String(data.isActive));
 
     const imageFile = fileInputRef.current?.files?.[0];
     if (imageFile) formData.append("image", imageFile);
@@ -138,6 +143,19 @@ export default function AddBrandDialog({
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2.5">
+              <div>
+                <Label className="text-sm font-medium text-gray-700">{t("status")}</Label>
+                <p className="text-xs text-muted-foreground">
+                  {isActive ? t("active") : t("inactive")}
+                </p>
+              </div>
+              <Switch
+                checked={isActive}
+                onCheckedChange={(val) => setValue("isActive", val)}
+              />
             </div>
 
             <div className="flex justify-center gap-3 pt-2">

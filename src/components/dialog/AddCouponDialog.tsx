@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -24,8 +25,9 @@ import { useGetCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { Category } from "@/types/category";
 import { Product } from "@/types/product";
-import { X } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 import { CouponFormData } from "@/types/coupon";
+import MyImage from "../MyImage";
 
 const initialFormData: CouponFormData = {
   code: "",
@@ -36,6 +38,7 @@ const initialFormData: CouponFormData = {
   appliesTo: "all",
   categories: [],
   products: [],
+  isPromotional: false,
 };
 
 // Normalize an array that may contain plain IDs or populated objects → string[]
@@ -73,6 +76,9 @@ export default function AddCouponDialog({
   const isPending = isCreating || isUpdating;
 
   const [formData, setFormData] = useState<CouponFormData>(initialFormData);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const { data: categoriesData, isLoading: categoriesLoading } = useGetCategories({ isAdmin: true });
   const { data: productsData, isLoading: productsLoading } = useProducts({ allProducts: true });
@@ -94,9 +100,14 @@ export default function AddCouponDialog({
         appliesTo: coupon.appliesTo || "all",
         categories: normalizeIds(coupon.categories),
         products: normalizeIds(coupon.products),
+        isPromotional: coupon.isPromotional ?? false,
       });
+      setPreviewUrl(coupon.image || null);
+      setFileName(null);
     } else {
       setFormData(initialFormData);
+      setPreviewUrl(null);
+      setFileName(null);
     }
   }, [open, isEditMode, coupon]);
 
@@ -143,37 +154,53 @@ export default function AddCouponDialog({
     return prod?.title?.[locale] || prod?.slug || id;
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFileName(file.name);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const buildFormData = () => {
+    const fd = new FormData();
+    fd.append("code", formData.code);
+    fd.append("type", formData.type);
+    fd.append("value", String(formData.value));
+    fd.append("usageLimit", String(formData.usageLimit));
+    fd.append("appliesTo", formData.appliesTo);
+    fd.append("isPromotional", String(formData.isPromotional ?? false));
+    if (formData.expiryDate) {
+      fd.append("expiryDate", new Date(formData.expiryDate).toISOString());
+    }
+    if (formData.appliesTo === "category") {
+      selectedCategories.forEach((id) => fd.append("categories[]", id));
+    }
+    if (formData.appliesTo === "product") {
+      selectedProducts.forEach((id) => fd.append("products[]", id));
+    }
+    const imageFile = fileInputRef.current?.files?.[0];
+    if (imageFile) fd.append("image", imageFile);
+    return fd;
+  };
+
   const handleSubmit = () => {
     if (formData.appliesTo === "category" && selectedCategories.length === 0) return;
     if (formData.appliesTo === "product" && selectedProducts.length === 0) return;
 
-    const payload: CouponFormData = {
-      code: formData.code,
-      type: formData.type,
-      value: formData.value,
-      expiryDate: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : "",
-      usageLimit: formData.usageLimit,
-      appliesTo: formData.appliesTo,
-      // Always send categories if any are selected
-      ...(selectedCategories.length > 0 ? { categories: selectedCategories } : {}),
-      // Always send products if any are selected
-      ...(selectedProducts.length > 0 ? { products: selectedProducts } : {}),
-    };
+    const fd = buildFormData();
 
     if (isEditMode) {
       updateCoupon(
-        { id: coupon._id, data: payload },
-        {
-          onSuccess: () => {
-            onOpenChange(false);
-          },
-        }
+        { id: coupon._id, data: fd },
+        { onSuccess: () => onOpenChange(false) }
       );
     } else {
-      createCoupon(payload, {
+      createCoupon(fd, {
         onSuccess: () => {
           onOpenChange(false);
           setFormData(initialFormData);
+          setPreviewUrl(null);
+          setFileName(null);
         },
       });
     }
@@ -290,7 +317,7 @@ export default function AddCouponDialog({
           </div>
 
           {/* Row 7: Category Dropdown — only when appliesTo === "category" */}
-          {(formData.appliesTo === "category" || formData.appliesTo === "all") && (
+          {formData.appliesTo === "category" && (
             <div className="space-y-1.5">
               <Label>
                 {t("selectCategories")}
@@ -348,7 +375,7 @@ export default function AddCouponDialog({
           )}
 
           {/* Row 8: Product Dropdown — only when appliesTo === "product" */}
-          {(formData.appliesTo === "product" || formData.appliesTo === "all") && (
+          {formData.appliesTo === "product" && (
             <div className="space-y-1.5">
               <Label>
                 {t("selectProducts")}
@@ -404,6 +431,40 @@ export default function AddCouponDialog({
               )}
             </div>
           )}
+
+          {/* Image Upload */}
+          <div className="space-y-1.5">
+            <Label>{t("image")}</Label>
+            <div className="border border-gray-200 rounded-md px-3 py-2 flex items-center gap-3 bg-white">
+              {previewUrl ? (
+                <MyImage src={previewUrl} alt="preview" width={256} height={256} className="h-8 w-8 rounded object-cover shrink-0" />
+              ) : (
+                <ImageIcon size={18} className="text-gray-400 shrink-0" />
+              )}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-sm text-gray-600 hover:text-aqua transition-colors font-medium truncate flex-1 text-left"
+              >
+                {fileName ?? t("browse")}
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            </div>
+          </div>
+
+          {/* Promotional Toggle */}
+          <div className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2.5">
+            <div>
+              <Label className="text-sm font-medium text-gray-700">{t("promotional")}</Label>
+              <p className="text-xs text-muted-foreground">
+                {formData.isPromotional ? t("active") : t("inactive")}
+              </p>
+            </div>
+            <Switch
+              checked={formData.isPromotional ?? false}
+              onCheckedChange={(val) => setFormData({ ...formData, isPromotional: val })}
+            />
+          </div>
 
           {/* Footer Buttons */}
           <div className="flex flex-col-reverse md:flex-row items-center justify-end gap-3 pt-4">

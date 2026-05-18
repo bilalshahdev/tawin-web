@@ -24,6 +24,16 @@ export const getAdminReport = async (): Promise<any> => {
   return data;
 };
 
+export const getAdminContacts = async (): Promise<any> => {
+  const { data } = await api.get("/api/contact");
+  return data;
+};
+
+export const deleteAdminContact = async (id: string): Promise<any> => {
+  const { data } = await api.delete(`/api/contact/${id}`);
+  return data;
+};
+
 export const deleteAdminReport = async (id: string): Promise<any> => {
   const { data } = await api.delete(`/api/reports/${id}`);
   return data;

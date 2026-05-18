@@ -32,7 +32,7 @@ export const useCreateCouponAdmin = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (formData: CouponFormData) => createCouponAdmin(formData),
+    mutationFn: (formData: CouponFormData | FormData) => createCouponAdmin(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coupons", "admin"] });
       queryClient.invalidateQueries({ queryKey: ["coupons", "admin", "stats"] });
@@ -48,7 +48,7 @@ export const useUpdateCouponAdmin = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<CouponFormData> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<CouponFormData> | FormData }) =>
       updateCouponAdmin(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coupons", "admin"] });
