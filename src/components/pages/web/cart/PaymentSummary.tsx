@@ -3,6 +3,10 @@
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 import { Ticket, X } from "lucide-react"
+import { useState } from "react"
+import { LoginDialog } from "@/components/dialog/LoginDialog"
+import { InactiveProfileDialog } from "@/components/dialog/InactiveProfileDialog"
+import { useUserProfile } from "@/hooks/useAuth"
 
 type PaymentSummaryProps = {
     subtotal: number
@@ -15,6 +19,32 @@ type PaymentSummaryProps = {
 
 const PaymentSummary = ({ subtotal, total, discountAmount, appliedCoupon, setStep, currencySymbol }: PaymentSummaryProps) => {
     const t = useTranslations("translation");
+    
+    const [loginOpen, setLoginOpen] = useState(false);
+    const [inactiveOpen, setInactiveOpen] = useState(false);
+
+    // User Profile Hook to check account status verification
+    const { data: userProfile } = useUserProfile();
+    const isVerified = userProfile?.data?.isVerified ?? false;
+
+    const handleCheckoutAction = () => {
+        const token = localStorage.getItem("token");
+        
+        // 1. Check if token exists
+        if (!token) {
+            setLoginOpen(true);
+            return;
+        }
+
+        // 2. Check if user is active/verified
+        if (!isVerified) {
+            setInactiveOpen(true);
+            return;
+        }
+
+        // Proceed to next step if passes all checks
+        setStep("2");
+    };
 
     return (
         <div className="lg:col-span-4">
@@ -77,12 +107,15 @@ const PaymentSummary = ({ subtotal, total, discountAmount, appliedCoupon, setSte
                 </div>
 
                 <Button
-                    onClick={() => setStep("2")}
+                    onClick={handleCheckoutAction}
                     variant="primary"
                 >
                     {t("checkout")}
                 </Button>
             </div>
+
+            <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+            <InactiveProfileDialog open={inactiveOpen} onOpenChange={setInactiveOpen} />
         </div>
     )
 }

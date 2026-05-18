@@ -10,8 +10,10 @@ import { useTranslations } from "next-intl"
 // --- CART HOOKS ---
 import { useCart } from "@/hooks/useCart"
 import { useCreateOrder } from "@/hooks/useOrder"
-import { useAllAddresses } from "@/hooks/useAuth"
+import { useAllAddresses, useUserProfile } from "@/hooks/useAuth"
 import { SpinnerLoader } from "@/components/common/SpinnerLoader"
+import { LoginDialog } from "@/components/dialog/LoginDialog"
+import { InactiveProfileDialog } from "@/components/dialog/InactiveProfileDialog"
 
 const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
     const t = useTranslations("translation");
@@ -26,6 +28,12 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
     const [paymentMethod, setPaymentMethod] = useState<"COD" | "CARD">("COD")
     const [selectedAddressId, setSelectedAddressId] = useState<string>("")
     const [phoneNumber, setPhoneNumber] = useState<string>("")
+    const [loginOpen, setLoginOpen] = useState(false)
+    const [inactiveOpen, setInactiveOpen] = useState(false)
+
+    // User Profile Hooks to check account active status verification
+    const { data: userProfile } = useUserProfile()
+    const isVerified = userProfile?.data?.isVerified ?? false
 
     // Get addresses
     const { data: addresses } = useAllAddresses()
@@ -35,16 +43,21 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
     const discountFromUrl = searchParams.get('discountAmount')
     const discount = discountFromUrl ? parseFloat(discountFromUrl) : 0
 
-    // Dynamic calculation based on Redux items
-    const subtotal = cartItems.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0)
-
-    const setStep = (step: string) => {
-        const params = new URLSearchParams(searchParams)
-        params.set("step", step)
-        router.push(`?${params.toString()}`)
-    }
-
     const handlePlaceOrder = () => {
+        const token = localStorage.getItem("token")
+
+        // 1. Authenticated session validation
+        if (!token) {
+            setLoginOpen(true)
+            return
+        }
+
+        // 2. Active account state constraint validation
+        if (!isVerified) {
+            setInactiveOpen(true)
+            return
+        }
+
         if (!selectedAddressId) {
             // Show error toast for missing address
             return
@@ -87,7 +100,7 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
                             <div className="text-center py-8 text-gray-500">
                                 <p className="text-sm">{t("noAddresses")}</p>
                                 <Button
-                                    onClick={() => router.push('/my-account?tab=addresses')}
+                                    onClick={() => router.push('/my-account?tab=address')}
                                     variant="outline"
                                     className="mt-4"
                                 >
@@ -130,13 +143,6 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
                                         </div>
                                     </div>
                                 ))}
-                                {/* <Button
-                                    onClick={() => router.push('/my-account?tab=addresses')}
-                                    variant="outline"
-                                    className="w-full mt-4"
-                                >
-                                    {t("addNewAddress")}
-                                </Button> */}
                             </>
                         )}
                     </div>
@@ -145,17 +151,6 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
                 <div className="border border-gray-200 rounded-md p-6 space-y-6">
                     <h2 className="text-xl font-semibold">{t("paymentType")}</h2>
                     <div className="space-y-3">
-                        {/* Commented out for now - backend only supports COD */}
-                        {/* <div
-                            onClick={() => setPaymentMethod("card")}
-                            className={`flex items-center justify-between p-4 rounded-md border cursor-pointer transition-all ${paymentMethod === "card" ? "bg-aqua/10 border-aqua" : "border-gray-200"}`}
-                        >
-                            <span className="text-sm font-medium text-gray-400">{t("cardPayment")}</span>
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "card" ? "border-aqua" : "border-gray-300"}`}>
-                                {paymentMethod === "card" && <div className="w-2.5 h-2.5 rounded-md bg-aqua" />}
-                            </div>
-                        </div> */}
-
                         <div
                             onClick={() => setPaymentMethod("COD")}
                             className={`flex items-center justify-between p-4 rounded-md border cursor-pointer transition-all ${paymentMethod === "COD" ? "bg-aqua/10 border-aqua" : "border-gray-200"}`}
@@ -166,35 +161,6 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Commented out card payment fields for now - backend only supports COD */}
-                    {/* {paymentMethod === "card" && (
-                        <div className="space-y-4 pt-4">
-                            <div className="space-y-2">
-                                <Label>{t("cardNumber")}</Label>
-                                <Input
-                                    placeholder="1234 1234 1234 1234"
-                                    className="border-gray-300 rounded-md h-[50px]"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>{t("expirationDate")}</Label>
-                                    <Input
-                                        placeholder="MM/YY"
-                                        className="border-gray-300 rounded-md h-[50px]"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t("cvc")}</Label>
-                                    <Input
-                                        placeholder={t("cvcPlaceholder")}
-                                        className="border-gray-300 rounded-md h-[50px]"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )} */}
                 </div>
 
                 <Button
@@ -211,6 +177,9 @@ const Step2 = ({ currencySymbol }: { currencySymbol: string }) => {
                 discount={discount}
                 currencySymbol={currencySymbol}
             />
+
+            <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+            <InactiveProfileDialog open={inactiveOpen} onOpenChange={setInactiveOpen} />
         </div>
     )
 }

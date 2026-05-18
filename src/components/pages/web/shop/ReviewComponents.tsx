@@ -6,6 +6,8 @@ import { useLocale, useTranslations } from "next-intl"
 import Image from "@/components/MyImage"
 import { Product } from "@/types/product"
 import { LoginDialog } from "@/components/dialog/LoginDialog"
+import { InactiveProfileDialog } from "@/components/dialog/InactiveProfileDialog" // Added import
+import { useUserProfile } from "@/hooks/useAuth" // Added import
 import { useState } from "react"
 
 export function ReviewHeader({
@@ -29,10 +31,19 @@ export function ReviewHeader({
 export function WriteReviewButton({ onClick }: { onClick?: () => void }) {
   const t = useTranslations("translation");
   const [loginOpen, setLoginOpen] = useState(false);
+  const [inactiveOpen, setInactiveOpen] = useState(false); // Added visibility state
+
+  // User Profile Hook to verify status
+  const { data: userProfile } = useUserProfile();
+  const isVerified = userProfile?.data?.isVerified ?? false;
 
   const handleClick = () => {
     const token = localStorage.getItem("token");
     if (!token) { setLoginOpen(true); return; }
+    
+    // Check if user account is inactive/unverified
+    if (!isVerified) { setInactiveOpen(true); return; }
+
     onClick?.();
   };
 
@@ -49,6 +60,7 @@ export function WriteReviewButton({ onClick }: { onClick?: () => void }) {
       </div>
 
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      <InactiveProfileDialog open={inactiveOpen} onOpenChange={setInactiveOpen} />
     </>
   )
 }

@@ -28,7 +28,6 @@ export default function Reviews({ product, reviews, isReviewsLoading }: {
   // No hook here, just use props directly
   const tabs = [
     { key: "reviews", label: t("reviewsTab") },
-    // { key: "faqs", label: t("faqsTab") },
     { key: "product_info", label: t("productInfoTab") }
   ]
 

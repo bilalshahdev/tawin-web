@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { loginUser, loginStaff, signUpUser, getUserProfile, updateUserProfile, getAdminUsers, verifyUser, addAddress, getAllAddresses, deleteAddress, updateAddress, signUpUserByAdmin, deleteUser, updateAdminProfile, forgotPassword, resetPassword } from "@/services/auth";
+import { loginUser, loginStaff, signUpUser, getUserProfile, updateUserProfile, getAdminUsers, verifyUser, addAddress, getAllAddresses, deleteAddress, updateAddress, signUpUserByAdmin, deleteUser, updateAdminProfile, forgotPassword, resetPassword, verifyOtp, resendOtp } from "@/services/auth";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setStaff } from "@/store/authSlice";
@@ -240,4 +240,28 @@ export const useSigninStaff = () => {
   });
 
   return mutation;
+};
+
+export const useVerifyOtp = () => {
+  return useMutation({
+    mutationFn: verifyOtp,
+    onSuccess: () => {
+      toast.success("OTP verified successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "OTP verification failed.");
+    },
+  });
+};
+
+export const useResendOtp = () => {
+  return useMutation({
+    mutationFn: resendOtp,
+    onSuccess: () => {
+      toast.success("OTP resent successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to resend OTP.");
+    },
+  });
 };

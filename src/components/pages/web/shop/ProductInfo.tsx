@@ -13,8 +13,10 @@ import { useAddToCart, useCart } from "@/hooks/useCart"
 import { useToggleFavorite, useFavorites } from "@/hooks/useFavorite"
 import { cn } from "@/lib/utils"
 import { LoginDialog } from "@/components/dialog/LoginDialog"
+import { InactiveProfileDialog } from "@/components/dialog/InactiveProfileDialog" // Added import
 import { useSettings } from "@/hooks/useSettings"
 import { getLocalizedText } from "@/utils/getLocalizedText"
+import { useUserProfile } from "@/hooks/useAuth" // Added import
 
 interface ProductInfoProps {
   product: Product
@@ -27,8 +29,6 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
   const {
     _id,
-    title,
-    description,
     price,
     originalPrice,
     measurements = "",
@@ -42,11 +42,16 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const { data: favData } = useFavorites();
   const { mutate: toggleFavApi, isPending: isTogglingFav } = useToggleFavorite();
 
+  // User Profile Hook to verify status
+  const { data: userProfile } = useUserProfile();
+  const isVerified = userProfile?.data?.isVerified ?? false;
+
   // --- UPDATED: State handles arrays for multiple selection ---
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
-  const [loginOpen, setLoginOpen] = useState(false); // added
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [inactiveOpen, setInactiveOpen] = useState(false); // Added visibility state
 
   const isInCart = cartData?.data?.items?.some((item: any) => item.productId === _id);
   const isWished = favData?.data?.some((fav: any) => fav.product?._id === _id);
@@ -66,8 +71,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
   };
 
   const handleAddToCart = () => {
-    const token = localStorage.getItem("token") // added
-    if (!token) { setLoginOpen(true); return } // added
+    const token = localStorage.getItem("token")
+    if (!token) { setLoginOpen(true); return }
+
+    // Check if user account is inactive/unverified
+    if (!isVerified) { setInactiveOpen(true); return }
 
     if (!isInCart) {
       addToCartApi({
@@ -83,8 +91,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
   };
 
   const handleToggleFavorite = () => {
-    const token = localStorage.getItem("token") // added
-    if (!token) { setLoginOpen(true); return } // added
+    const token = localStorage.getItem("token")
+    if (!token) { setLoginOpen(true); return }
+
+    // Check if user account is inactive/unverified
+    if (!isVerified) { setInactiveOpen(true); return }
 
     toggleFavApi(_id);
   };
@@ -189,6 +200,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       <Separator />
 
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      <InactiveProfileDialog open={inactiveOpen} onOpenChange={setInactiveOpen} />
     </div>
   )
 }

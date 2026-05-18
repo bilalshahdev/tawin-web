@@ -14,9 +14,11 @@ import Link from "next/link"
 import { useAddToCart } from "@/hooks/useCart"
 import { useFavorites, useToggleFavorite } from "@/hooks/useFavorite"
 import { LoginDialog } from "../dialog/LoginDialog"
+import { InactiveProfileDialog } from "../dialog/InactiveProfileDialog" // Imported here
 import { SpinnerLoader } from "../common/SpinnerLoader"
 import { useSettings } from "@/hooks/useSettings"
 import { getLocalizedText } from "@/utils/getLocalizedText"
+import { useUserProfile } from "@/hooks/useAuth" // Imported profile hook
 
 export function ProductCard({
     _id,
@@ -34,10 +36,15 @@ export function ProductCard({
     const t = useTranslations("translation");
 
     const [loginOpen, setLoginOpen] = useState(false)
+    const [inactiveOpen, setInactiveOpen] = useState(false) // State to track inactive dialog
     const hasBadge = isNew || !!discount
 
     const { mutate: addToCartApi, isPending: isAddingToCart } = useAddToCart();
     const { data: settingsData } = useSettings();
+
+    // User Profile Hooks to check verification status
+    const { data: userProfile } = useUserProfile();
+    const isVerified = userProfile?.data?.isVerified ?? false;
 
     // Favorite API Hooks
     const { data: favData } = useFavorites();
@@ -52,6 +59,13 @@ export function ProductCard({
             setLoginOpen(true)
             return
         }
+
+        // If user is logged in but profile is inactive/unverified
+        if (!isVerified) {
+            setInactiveOpen(true)
+            return
+        }
+
         toggleFavApi(_id);
     };
 
@@ -61,6 +75,12 @@ export function ProductCard({
 
         if (!token) {
             setLoginOpen(true)
+            return
+        }
+
+        // If user is logged in but profile is inactive/unverified
+        if (!isVerified) {
+            setInactiveOpen(true)
             return
         }
 
@@ -150,6 +170,7 @@ export function ProductCard({
             </Card>
 
             <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+            <InactiveProfileDialog open={inactiveOpen} onOpenChange={setInactiveOpen} />
         </>
     )
 }

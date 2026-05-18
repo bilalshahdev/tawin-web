@@ -46,8 +46,7 @@ export default function AddBrandDialog({
     },
   });
 
-  const { handleSubmit, reset, watch, setValue } = methods;
-  const isActive = watch("isActive");
+  const { handleSubmit, reset, watch } = methods;
 
   useEffect(() => {
     if (open) {
@@ -145,7 +144,7 @@ export default function AddBrandDialog({
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2.5">
+            {/* <div className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2.5">
               <div>
                 <Label className="text-sm font-medium text-gray-700">{t("status")}</Label>
                 <p className="text-xs text-muted-foreground">
@@ -156,7 +155,7 @@ export default function AddBrandDialog({
                 checked={isActive}
                 onCheckedChange={(val) => setValue("isActive", val)}
               />
-            </div>
+            </div> */}
 
             <div className="flex justify-center gap-3 pt-2">
               <Button type="button" variant="outline" size="sm" className="flex-1 border-gray-200 text-gray-600 hover:bg-gray-50 rounded-md h-10" onClick={handleClose} disabled={isPending}>

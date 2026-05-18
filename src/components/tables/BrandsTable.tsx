@@ -4,16 +4,79 @@ import { useState, useMemo } from "react";
 import { TableCell } from "@/components/ui/table";
 import { DataTable } from "@/components/DataTable";
 import { cn } from "@/lib/utils";
-import { Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import BrandDetailDialog from "../dialog/BrandDetailDialog";
 import ConfirmDialog from "../dialog/ConfirmDialog";
 import AddBrandDialog from "../dialog/AddBrandDialog";
 import { useLocale, useTranslations } from "next-intl";
 import MyImage from "../MyImage";
-import { useDeleteBrand } from "@/hooks/useBrand";
+import { useDeleteBrand, useUpdateBrand } from "@/hooks/useBrand";
 import { getLocalizedText } from "@/utils/getLocalizedText";
 
+/* ── Interactive Dropdown Component ── */
+export const StatusDropdown = ({ item, t }: { item: any; t: any }) => {
+  const [currentStatus, setCurrentStatus] = useState(item.isActive ? "active" : "closed");
+  const { mutate: updateBrand } = useUpdateBrand();
+
+  const handleStatusChange = (newStatus: string) => {
+    const isActiveValue = newStatus === "active";
+    
+    // Building a mock FormData object to match your backend signature
+    const formData = new FormData();
+    formData.append("isActive", String(isActiveValue));
+
+    updateBrand(
+      { id: item._id, data: formData },
+      {
+        onSuccess: () => {
+          setCurrentStatus(newStatus);
+        },
+      }
+    );
+  };
+
+  return (
+    <Select value={currentStatus} onValueChange={handleStatusChange}>
+      <SelectTrigger
+        className={cn(
+          "h-8 w-[140px] px-2 border rounded-md transition-all性能 outline-none focus:ring-0 font-semibold text-xs",
+          currentStatus === "active"
+            ? "bg-aqua/10 border-aqua text-aqua"
+            : "bg-red-500/10 border-red-500 text-red-600"
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2">
+          <SelectValue />
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="active" className="cursor-pointer">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={14} className="text-aqua" />
+            <span>{t("active")}</span>
+          </div>
+        </SelectItem>
+        <SelectItem value="closed" className="cursor-pointer">
+          <div className="flex items-center gap-2">
+            <XCircle size={14} className="text-red-500" />
+            <span>{t("closed")}</span>
+          </div>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
+/* ── Main Table Component ── */
 const BrandsTable = ({
   data,
   activeTab,
@@ -67,8 +130,6 @@ const BrandsTable = ({
   };
 
   const row = (item: any) => {
-    const isActive = item.isActive;
-    const statusText = isActive ? t("active") : t("closed");
     const regDate = new Date(item.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US');
 
     return (
@@ -84,17 +145,24 @@ const BrandsTable = ({
         </TableCell>
         <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
           <div className="relative h-10 w-10 border rounded-md overflow-hidden bg-gray-50">
-            <MyImage src={item.image} alt={item.name.en} width={256} height={256} />
+            <MyImage src={item.image} alt={item.name?.en || "brand logo"} width={256} height={256} />
           </div>
         </TableCell>
-        <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
-          <div className="flex items-center gap-2">
-            <span className={cn("h-1.5 w-1.5 rounded-full", isActive ? "bg-aqua" : "bg-red-500")} />
-            <span className={cn("text-xs font-medium", isActive ? "text-aqua" : "text-red-600")}>
-              {statusText}
-            </span>
-          </div>
+        
+        {/* Updated Status Cell containing the Dropdown Control */}
+        <TableCell onClick={(e) => e.stopPropagation()}>
+          {canPatch ? (
+            <StatusDropdown item={item} t={t} />
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className={cn("h-1.5 w-1.5 rounded-full", item.isActive ? "bg-aqua" : "bg-red-500")} />
+              <span className={cn("text-xs font-medium", item.isActive ? "text-aqua" : "text-red-600")}>
+                {item.isActive ? t("active") : t("closed")}
+              </span>
+            </div>
+          )}
         </TableCell>
+
         {(canPatch || canDelete) && (
           <TableCell>
             <div className="flex items-center gap-2">

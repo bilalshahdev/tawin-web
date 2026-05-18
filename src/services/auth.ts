@@ -119,3 +119,13 @@ export const resetPassword = async (payload: { email: string; token: string; new
   const { data } = await api.post("/api/auth/reset-password", payload);
   return data;
 };
+
+export const verifyOtp = async (payload: { email: string; otp: string }) => {
+  const { data } = await api.post("/api/auth/verify-otp", payload);
+  return data;
+};
+
+export const resendOtp = async (email: string) => {
+  const { data } = await api.post("/api/auth/resend-otp", { email });
+  return data;
+};

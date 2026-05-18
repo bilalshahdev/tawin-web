@@ -613,7 +613,10 @@
     "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
     "backToLogin": "العودة لتسجيل الدخول",
     "resetToken": "رمز الإعادة (من بريدك الإلكتروني)",
-    "promotional": "ترويجي"
+    "promotional": "ترويجي",
+    "verificationRequired": "التحقق مطلوب",
+    "verificationRequiredDescription": "حسابك غير مفعل. يرجى التحقق من ملفك الشخصي لفتح جميع ميزات المنصة.",
+    "verifyNow": "التحقق الآن"
   },
   "confirm": {
     "logout": {

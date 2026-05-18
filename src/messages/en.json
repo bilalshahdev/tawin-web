@@ -613,7 +613,10 @@
     "confirmNewPassword": "Confirm New Password",
     "backToLogin": "Back to Login",
     "resetToken": "Reset Token (from your email)",
-    "promotional": "Promotional"
+    "promotional": "Promotional",
+    "verificationRequired": "Verification Required",
+    "verificationRequiredDescription": "Your account is currently inactive. Please verify your profile to unlock all platform features.a",
+    "verifyNow": "Verify Profile"
   },
   "confirm": {
     "logout": {

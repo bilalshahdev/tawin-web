@@ -18,6 +18,7 @@ import { useCart } from "@/hooks/useCart"
 import { useSettings } from "@/hooks/useSettings"
 import { useQueryClient } from "@tanstack/react-query"
 import { getLocalizedText } from "@/utils/getLocalizedText"
+import { useUserProfile } from "@/hooks/useAuth"
 
 export default function Navbar() {
   const t = useTranslations("translation");
@@ -27,6 +28,8 @@ export default function Navbar() {
   const queryClient = useQueryClient();
 
   const { data: settings, isLoading: settingsLoading } = useSettings();
+  const { data: userProfile } = useUserProfile();
+  const isVerified = userProfile?.data?.isVerified ?? false;
 
   const rawNormalizedPath = "/" + pathname.split("/").filter(Boolean).slice(1).join("/");
   const normalizedPath = rawNormalizedPath === "/" ? "/" : rawNormalizedPath;
@@ -48,6 +51,7 @@ export default function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem("token")
     setIsLoggedIn(!!token)
+    
   }, []);
 
   const handleLogout = () => {
@@ -134,7 +138,7 @@ export default function Navbar() {
             <>
               <LanguageSwitcher isMain={isMain} />
 
-              {isLoggedIn && (
+              {(isLoggedIn && isVerified) && (
                 <button
                   onClick={() => setCartOpen(true)}
                   className="flex items-center justify-center gap-1 transition-colors relative text-gray-600 hover:text-aqua"
