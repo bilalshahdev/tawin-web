@@ -52,3 +52,10 @@ export const validateCoupon = async (request: ValidateCouponRequest)=> {
   const { data } = await api.post("/api/coupons/validate", request);
   return data;
 };
+
+export const getPromotionalCoupons = async () => {
+  const { data } = await api.get(
+    "/api/coupons/promotional"
+  );
+  return data;
+};

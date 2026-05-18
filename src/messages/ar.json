@@ -616,7 +616,16 @@
     "promotional": "ترويجي",
     "verificationRequired": "التحقق مطلوب",
     "verificationRequiredDescription": "حسابك غير مفعل. يرجى التحقق من ملفك الشخصي لفتح جميع ميزات المنصة.",
-    "verifyNow": "التحقق الآن"
+    "verifyNow": "التحقق الآن",
+    "off": "خصم",
+    "discountAllItems": "خصم {discount} على جميع المنتجات",
+    "discountProducts": "خصم {discount} على المنتجات",
+    "discountCategories": "خصم {discount} على الفئات المختارة",
+    "discountLimited": "خصم {discount} على المجموعة المحدودة",
+    "subtitleAllItems": "استمتع بخصم {discount} على جميع العناصر والديكورات!",
+    "subtitleProducts": "احصل على خصم {discount} على عناصر مختارة من مجموعة منتجاتنا. الكمية محدودة!",
+    "subtitleCategories": "عرض حصري! وفر {discount} على أفضل فئات الكتالوج لدينا لفترة محدودة.",
+    "subtitleLimited": "عرض ترويجي خاص - احصل على منتجاتك المفضلة قبل نفاد الوقت!"
   },
   "confirm": {
     "logout": {

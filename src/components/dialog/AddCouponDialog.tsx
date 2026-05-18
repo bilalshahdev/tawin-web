@@ -179,7 +179,7 @@ export default function AddCouponDialog({
       selectedProducts.forEach((id) => fd.append("products[]", id));
     }
     const imageFile = fileInputRef.current?.files?.[0];
-    if (imageFile) fd.append("image", imageFile);
+    if (imageFile) fd.append("thumbnail", imageFile);
     return fd;
   };
 
@@ -434,7 +434,7 @@ export default function AddCouponDialog({
 
           {/* Image Upload */}
           <div className="space-y-1.5">
-            <Label>{t("image")}</Label>
+            <Label>{t("thumbnail")}</Label>
             <div className="border border-gray-200 rounded-md px-3 py-2 flex items-center gap-3 bg-white">
               {previewUrl ? (
                 <MyImage src={previewUrl} alt="preview" width={256} height={256} className="h-8 w-8 rounded object-cover shrink-0" />
@@ -456,9 +456,6 @@ export default function AddCouponDialog({
           <div className="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2.5">
             <div>
               <Label className="text-sm font-medium text-gray-700">{t("promotional")}</Label>
-              <p className="text-xs text-muted-foreground">
-                {formData.isPromotional ? t("active") : t("inactive")}
-              </p>
             </div>
             <Switch
               checked={formData.isPromotional ?? false}

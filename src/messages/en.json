@@ -616,7 +616,16 @@
     "promotional": "Promotional",
     "verificationRequired": "Verification Required",
     "verificationRequiredDescription": "Your account is currently inactive. Please verify your profile to unlock all platform features.a",
-    "verifyNow": "Verify Profile"
+    "verifyNow": "Verify Profile",
+    "off": "OFF",
+    "discountAllItems": "{discount} Off All Items",
+    "discountProducts": "{discount} Off Products",
+    "discountCategories": "{discount} Off Selected Categories",
+    "discountLimited": "{discount} Off Limited Collection",
+    "subtitleAllItems": "Enjoy {discount} off across all items and decorations!",
+    "subtitleProducts": "Get {discount} off on selected items from our product collection. Limited stock available!",
+    "subtitleCategories": "Exclusive deal! Save {discount} on our premier catalog categories for a limited time.",
+    "subtitleLimited": "Special promotion offer - grab your favorites before time runs out!"
   },
   "confirm": {
     "logout": {

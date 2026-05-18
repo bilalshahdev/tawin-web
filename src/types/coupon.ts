@@ -33,3 +33,22 @@ export interface CouponStats {
   totalUsageCount: number;
   expiredCoupons: number;
 }
+
+export interface PromotionalCoupon {
+  _id: string;
+  code: string;
+  type: "percentage" | "fixed";
+  value: number;
+  minOrderAmount: number;
+  expiryDate: string;
+  usageLimit: number;
+  usedCount: number;
+  usedBy: string[];
+  isActive: boolean;
+  isPromotional: boolean;
+  thumbnail: string;
+  appliesTo: "all" | "categories" | "products";
+  categories: string[];
+  products: string[];
+  createdAt: string;
+}

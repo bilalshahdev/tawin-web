@@ -7,7 +7,8 @@ import {
   deleteCouponAdmin,
   toggleCouponStatusAdmin,
   validateCoupon,
-  ValidateCouponRequest
+  ValidateCouponRequest,
+  getPromotionalCoupons
 } from "@/services/coupon";
 import { toast } from "sonner";
 import { CouponFormData } from "@/types/coupon";
@@ -98,5 +99,13 @@ export const useValidateCoupon = () => {
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Invalid coupon code.");
     },
+  });
+};
+
+export const usePromotionalCoupons = () => {
+  return useQuery({
+    queryKey: ["coupons", "promotional"],
+    queryFn: getPromotionalCoupons,
+    staleTime: 3 * 60 * 1000,
   });
 };

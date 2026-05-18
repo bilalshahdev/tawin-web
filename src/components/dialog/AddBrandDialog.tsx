@@ -4,7 +4,6 @@ import { useRef, useState, useEffect } from "react";
 import { ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useTranslations } from "next-intl";
 import { useForm, FormProvider } from "react-hook-form";
 import { useCreateBrand, useUpdateBrand } from "@/hooks/useBrand";
@@ -46,7 +45,7 @@ export default function AddBrandDialog({
     },
   });
 
-  const { handleSubmit, reset, watch } = methods;
+  const { handleSubmit, reset } = methods;
 
   useEffect(() => {
     if (open) {
