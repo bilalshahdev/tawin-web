@@ -595,6 +595,8 @@
     "unreadCount": "{count} unread",
     "markAllAsRead": "Mark all as read",
     "noNotificationsYet": "No notifications yet",
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
     "read": "Read",
     "pageOf": "Page {page} of {totalPages}",
     "justNow": "Just now",
