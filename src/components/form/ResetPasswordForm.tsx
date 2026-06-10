@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ResetPasswordSchema, ResetPasswordFormData } from "@/validations/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
+import { SpinnerLoader } from "@/components/common/SpinnerLoader";
 import { toast } from "sonner";
 
 interface ResetPasswordFormProps {
@@ -17,6 +20,9 @@ export default function ResetPasswordForm({
   token,
   email,
 }: ResetPasswordFormProps) {
+  const t = useTranslations("translation");
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -32,14 +38,12 @@ export default function ResetPasswordForm({
     },
   });
 
-  // CRITICAL: This effect forces hook-form to pick up the params when Next.js updates them from the URL
   useEffect(() => {
     if (token) setValue("token", token);
     if (email) setValue("email", email);
   }, [token, email, setValue]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    // Ultimate defensive verification block before executing dispatch
     if (!data.token) {
       toast.error(
         "Security token missing. Please use the original email reset link.",
@@ -48,49 +52,107 @@ export default function ResetPasswordForm({
     }
 
     try {
-      // Execute your API endpoint request mutation here
-      // yourResetMutationHook({ email: data.email, token: data.token, password: data.newPassword })
       toast.success("Password updated successfully!");
+      setIsSuccess(true);
     } catch (err) {
       toast.error("Failed to update password. Link might be expired.");
     }
   };
 
+  if (isSuccess) {
+    return (
+      <section className="flex w-full flex-col items-center justify-center px-8 lg:w-1/2 xl:px-24">
+        <div className="w-full max-w-sm space-y-6 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10 text-green-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-medium tracking-tight text-foreground">
+              Password Reset Complete
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Your credentials have been securely updated. You can now login to
+              your account using your new password.
+            </p>
+          </div>
+          <div className="pt-4">
+            <Link
+              href="/auth/signin"
+              className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium"
+            >
+              {t("backToLogin")}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Hidden input elements safely housing authorization fields */}
-      <input type="hidden" {...register("token")} />
-      <input type="hidden" {...register("email")} />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">New Password</label>
-        <Input
-          type="password"
-          placeholder="••••••••"
-          {...register("newPassword")}
-        />
-        {errors.newPassword && (
-          <p className="text-xs text-red-500">{errors.newPassword.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Confirm Password</label>
-        <Input
-          type="password"
-          placeholder="••••••••"
-          {...register("confirmPassword")}
-        />
-        {errors.confirmPassword && (
-          <p className="text-xs text-red-500">
-            {errors.confirmPassword.message}
+    <section className="flex w-full flex-col items-center justify-center px-8 lg:w-1/2 xl:px-24">
+      <div className="w-full max-w-sm space-y-10">
+        {/* Header Block Matching forgotPassword */}
+        <div className="space-y-1">
+          <h1 className="text-3xl font-medium tracking-tight text-foreground">
+            Reset Password
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Please enter your new password sequence below to regain access.
           </p>
-        )}
-      </div>
+        </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Updating..." : "Reset Password"}
-      </Button>
-    </form>
+        {/* Input fields */}
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <input type="hidden" {...register("token")} />
+          <input type="hidden" {...register("email")} />
+
+          <Input
+            id="newPassword"
+            type="password"
+            placeholder="New Password (••••••••)"
+            variant="auth"
+            error={!!errors.newPassword}
+            errorMessage={errors.newPassword?.message}
+            {...register("newPassword")}
+          />
+
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm New Password (••••••••)"
+            variant="auth"
+            error={!!errors.confirmPassword}
+            errorMessage={errors.confirmPassword?.message}
+            {...register("confirmPassword")}
+          />
+
+          <Button type="submit" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? <SpinnerLoader /> : "Update Password"}
+          </Button>
+        </form>
+
+        <div className="text-center">
+          <Link
+            href="/auth/signin"
+            className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium"
+          >
+            {t("backToLogin")}
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
