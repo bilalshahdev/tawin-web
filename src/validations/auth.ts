@@ -63,8 +63,8 @@ export const ForgotPasswordSchema = z.object({
 });
 
 export const ResetPasswordSchema = z.object({
-  email: z.string().email().optional().or(z.literal("")),
-  token: z.string().optional().or(z.literal("")), // <-- ALLOWS EMPTY STRINGS ON INITIAL MOUNT
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  token: z.string().optional().or(z.literal("")), // Allows initial empty strings safely
   newPassword: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Confirm password is required"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
