@@ -41,8 +41,8 @@ const ResetPasswordForm = ({ email, token = "" }: ResetPasswordFormProps) => {
 
   const onSubmit = (data: ResetPasswordFormData) => {
     doReset({
-      email: data.email,
-      token: data.token,
+      email: data.email || "",
+      token: data.token || "",
       newPassword: data.newPassword,
     });
   };
