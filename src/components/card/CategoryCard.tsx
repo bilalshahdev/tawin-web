@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from '../MyImage'
 import { useLocale } from 'next-intl'
 import { getLocalizedText } from '@/utils/getLocalizedText'
+import { Category } from '@/types/category'
 
 const CategoryCard = ({ data, loading }: { data?: Category, loading?: boolean }) => {
     const locale = useLocale() as "en" | "ar";
@@ -25,7 +26,7 @@ const CategoryCard = ({ data, loading }: { data?: Category, loading?: boolean })
         >
             <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden bg-[#F3F5F7] border-2 border-transparent group-hover:border-aqua transition-all duration-300 shadow-sm">
                 <Image
-                    src={data?.image}
+                    src={data?.thumbnail}
                     alt={getLocalizedText(data?.name, locale)}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"

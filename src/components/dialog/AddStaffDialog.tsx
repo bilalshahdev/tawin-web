@@ -24,7 +24,7 @@ type Operation = 'get' | 'post' | 'patch' | 'put' | 'delete';
 type StaffModule =
     | 'dashboard' | 'orders' | 'users' | 'staff' | 'products'
     | 'construction-basket' | 'reviews' | 'suppliers' | 'coupon codes'
-    | 'financial transfers' | 'brand' | 'stock' | 'categories';
+    | 'financial transfers' | 'brand' | 'stock' | 'categories' | 'settings';
 
 interface IPermission {
     module: StaffModule;
@@ -53,7 +53,7 @@ const CreateStaffSchema = z.object({
     phone: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     permissions: z.array(z.object({
-        module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "categories", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock"]),
+        module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "categories", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock", "settings"]),
         operations: z.array(z.enum(["get", "post", "patch", "put", "delete"]))
     })).optional(),
 });
@@ -65,7 +65,7 @@ const EditStaffSchema = z.object({
     phone: z.string().optional(),
     password: z.union([z.string().length(0), z.string().min(8, "Password must be at least 8 characters")]).optional(),
     permissions: z.array(z.object({
-        module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "categories", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock"]),
+        module: z.enum(["dashboard", "orders", "users", "staff", "products", "construction-basket", "categories", "reviews", "suppliers", "coupon codes", "financial transfers", "brand", "stock", "settings"]),
         operations: z.array(z.enum(["get", "post", "patch", "put", "delete"]))
     })).optional(),
 });
@@ -90,6 +90,7 @@ const PERMISSIONS = [
     { id: "coupon codes", name: "couponCodes", operations: ["get", "post", "patch", "delete"] as Operation[] },
     { id: "financial transfers", name: "financialTransfers", operations: ["get", "post", "patch", "delete"] as Operation[] },
     { id: "brand", name: "brand", operations: ["get", "post", "patch", "delete"] as Operation[] },
+    { id: "settings", name: "config", operations: ["get", "patch"] as Operation[] },
 ];
 
 export default function AddStaffDialog({ open, onOpenChange, staff }: AddStaffDialogProps) {

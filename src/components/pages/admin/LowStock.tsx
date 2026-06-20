@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import CategoryFormDialog from "@/components/dialog/CategoryFormDialog";
 import { RootState } from "@/store/store";
+import { exportReport } from "@/utils/reportExport";
 
 const CATEGORY_PAGE_SIZE = 8;
 
@@ -97,7 +98,7 @@ const LowStock = () => {
     const actions = [
         { icon: <RefreshCcw className={cn("h-4 w-4", isFetching && "animate-spin")} />, color: "text-gray-500", onClick: () => refetch() },
         { icon: <ArrowUpDown className="h-4 w-4" />, color: isReversed ? "text-aqua font-bold" : "text-gray-500", onClick: () => setIsReversed(!isReversed) },
-        { icon: <FileText className="h-4 w-4" />, color: "text-red-500" },
+        { icon: <FileText className="h-4 w-4" />, color: "text-red-500", onClick: () => exportReport(t("lowStock"), displayedProducts) },
     ];
 
     return (

@@ -87,7 +87,7 @@ export default function Sidebar({ className }: { className?: string }) {
   ]);
 
   const productsMenuLabels = new Set(["products", "stock", "reviews"]);
-  const adminMenuLabels = new Set(["staff"]);
+  const adminMenuLabels = new Set(["staff", "settings"]);
 
   const mainMenu = filteredMenu.filter((item) => mainMenuLabels.has(item.label));
   const productsMenu = filteredMenu.filter((item) => productsMenuLabels.has(item.label));

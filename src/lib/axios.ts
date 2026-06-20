@@ -17,11 +17,12 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401 && error.response.data.message !== "The email or password you entered is incorrect.") {
+      const hadAdminToken = !!localStorage.getItem("admin_token");
+
       localStorage.removeItem("token");
       localStorage.removeItem("admin_token");
 
-      const adminToken = localStorage.getItem("admin_token");
-      window.location.href = adminToken ? "/auth/admin" : "/auth/signin";
+      window.location.href = hadAdminToken ? "/auth/admin" : "/auth/signin";
     }
 
     return Promise.reject(error);

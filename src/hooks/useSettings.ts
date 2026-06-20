@@ -16,6 +16,7 @@ export const useUpdateSettings = () => {
     mutationFn: updateAdminSettings,
     onSuccess: () => {
       toast.success("Settings updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["appSettings"] });
       queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
     },
     onError: (error: any) => {

@@ -31,6 +31,7 @@ export type SidebarLabel =
     | 'financial transfers'
     | 'brand'
     | 'stock'
+    | 'settings'
     | 'reports';
 
 export interface MenuItem {
@@ -62,5 +63,5 @@ export const sidebarMenu: MenuItem[] = [
     // Administration
     { title: "manager", icon: Shield, path: "/admin/manager", label: "staff" },
     { title: "controlPermissions", icon: Settings, path: "/admin/permissions", label: "staff" },
-    { title: "config", icon: Settings, path: "/admin/config", label: "staff" }
+    { title: "config", icon: Settings, path: "/admin/config", label: "settings" }
 ];

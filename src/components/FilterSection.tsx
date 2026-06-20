@@ -18,6 +18,7 @@ import AddSupplierDialog from "@/components/dialog/AddSupplierDialog";
 import AddBrandDialog from "@/components/dialog/AddBrandDialog";
 import AddUserDialog from "./dialog/AddUserDialog";
 import AddStaffDialog from "./dialog/AddStaffDialog";
+import { exportReport } from "@/utils/reportExport";
 
 interface FilterSectionProps {
   activeTab: string;
@@ -35,6 +36,7 @@ interface FilterSectionProps {
   setRatingFilter?: (val: number | null) => void;
   reviewsTotal?: number;
   canPost?: boolean;
+  reportTitle?: string;
 }
 
 const FilterSection = ({
@@ -52,6 +54,7 @@ const FilterSection = ({
   setRatingFilter,
   reviewsTotal = 0,
   canPost = true,
+  reportTitle,
 }: FilterSectionProps) => {
   const t = useTranslations("translation");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -88,7 +91,11 @@ const FilterSection = ({
       onClick: () => setIsReversed?.(!isReversed)
     },
     // { icon: <MoreHorizontal className="h-4 w-4" />, color: "text-gray-500" },
-    { icon: <FileText className="h-4 w-4" />, color: "text-red-500" },
+    {
+      icon: <FileText className="h-4 w-4" />,
+      color: "text-red-500",
+      onClick: () => exportReport(reportTitle || getTitle() || t("report"), data || [])
+    },
   ];
 
   const getTitle = () => {
