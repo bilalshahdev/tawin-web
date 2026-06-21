@@ -20,7 +20,8 @@ export const useUpdateSettings = () => {
       queryClient.invalidateQueries({ queryKey: ["adminSettings"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update settings");
+      const validationMessage = error.response?.data?.errors?.[0]?.message;
+      toast.error(validationMessage || error.response?.data?.message || "Failed to update settings");
     },
   });
 };
