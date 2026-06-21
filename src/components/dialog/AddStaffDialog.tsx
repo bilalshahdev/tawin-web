@@ -26,6 +26,18 @@ type StaffModule =
     | 'construction-basket' | 'reviews' | 'suppliers' | 'coupon codes'
     | 'financial transfers' | 'brand' | 'stock' | 'categories' | 'settings';
 
+const normalizeModuleId = (module: string): StaffModule => {
+    const aliases: Record<string, StaffModule> = {
+        coupon: "coupon codes",
+        coupons: "coupon codes",
+        financial: "financial transfers",
+        financials: "financial transfers",
+        brands: "brand",
+    };
+
+    return aliases[module] || (module as StaffModule);
+};
+
 interface IPermission {
     module: StaffModule;
     operations: Operation[];
@@ -128,7 +140,10 @@ export default function AddStaffDialog({ open, onOpenChange, staff }: AddStaffDi
             setValue("lastName", staff.lastName || "");
             setValue("email", staff.email || "");
             setValue("phone", staff.phone || "");
-            setValue("permissions", staff.permissions || []);
+            setValue("permissions", (staff.permissions || []).map((permission) => ({
+                ...permission,
+                module: normalizeModuleId(permission.module),
+            })));
             // Clear password when editing to avoid validation errors
             setValue("password", "");
         } else if (open) {
@@ -141,7 +156,10 @@ export default function AddStaffDialog({ open, onOpenChange, staff }: AddStaffDi
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            permissions: data.permissions || [],
+            permissions: (data.permissions || []).map((permission) => ({
+                ...permission,
+                module: normalizeModuleId(permission.module),
+            })),
         };
 
         // Include phone if provided

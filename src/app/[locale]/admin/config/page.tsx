@@ -57,36 +57,39 @@ const AdminSettingsPage = () => {
 
     const onSubmit = (data: any) => {
         const formData = new FormData();
+        const appendValue = (key: string, value: unknown) => {
+            formData.append(key, value == null ? "" : String(value));
+        };
 
         // Core Fields
-        formData.append("enableContactEmail", String(data.enableContactEmail));
-        formData.append("businessName[en]", data.businessName.en);
-        formData.append("businessName[ar]", data.businessName.ar);
-        formData.append("tagline[en]", data.tagline.en);
-        formData.append("tagline[ar]", data.tagline.ar);
-        formData.append("currency", data.currency);
-        formData.append("currencySymbol", data.currencySymbol);
+        appendValue("enableContactEmail", data.enableContactEmail);
+        appendValue("businessName[en]", data.businessName?.en);
+        appendValue("businessName[ar]", data.businessName?.ar);
+        appendValue("tagline[en]", data.tagline?.en);
+        appendValue("tagline[ar]", data.tagline?.ar);
+        appendValue("currency", data.currency);
+        appendValue("currencySymbol", data.currencySymbol);
 
         // Socials
-        Object.keys(data.socialLinks).forEach(key => {
-            formData.append(`socialLinks[${key}]`, data.socialLinks[key]);
+        Object.keys(data.socialLinks || {}).forEach(key => {
+            appendValue(`socialLinks[${key}]`, data.socialLinks?.[key]);
         });
 
         // Headers
-        formData.append("header[landing_page][text][en]", data.header.landing_page.text.en);
-        formData.append("header[landing_page][text][ar]", data.header.landing_page.text.ar);
-        formData.append("header[home][text][en]", data.header.home.text.en);
-        formData.append("header[home][text][ar]", data.header.home.text.ar);
-        formData.append("header[shop][text][en]", data.header.shop.text.en); // Added Shop text en
-        formData.append("header[shop][text][ar]", data.header.shop.text.ar); // Added Shop text ar
+        appendValue("header[landing_page][text][en]", data.header?.landing_page?.text?.en);
+        appendValue("header[landing_page][text][ar]", data.header?.landing_page?.text?.ar);
+        appendValue("header[home][text][en]", data.header?.home?.text?.en);
+        appendValue("header[home][text][ar]", data.header?.home?.text?.ar);
+        appendValue("header[shop][text][en]", data.header?.shop?.text?.en);
+        appendValue("header[shop][text][ar]", data.header?.shop?.text?.ar);
 
         // Pages
-        formData.append("pages[privacyPolicy][en]", data.pages.privacyPolicy.en);
-        formData.append("pages[privacyPolicy][ar]", data.pages.privacyPolicy.ar);
-        formData.append("pages[termsAndConditions][en]", data.pages.termsAndConditions.en);
-        formData.append("pages[termsAndConditions][ar]", data.pages.termsAndConditions.ar);
-        formData.append("pages[about][en]", data.pages.about.en);
-        formData.append("pages[about][ar]", data.pages.about.ar);
+        appendValue("pages[privacyPolicy][en]", data.pages?.privacyPolicy?.en);
+        appendValue("pages[privacyPolicy][ar]", data.pages?.privacyPolicy?.ar);
+        appendValue("pages[termsAndConditions][en]", data.pages?.termsAndConditions?.en);
+        appendValue("pages[termsAndConditions][ar]", data.pages?.termsAndConditions?.ar);
+        appendValue("pages[about][en]", data.pages?.about?.en);
+        appendValue("pages[about][ar]", data.pages?.about?.ar);
 
         // Files
         const logoFile = (document.getElementById("logo-input") as HTMLInputElement).files?.[0];
