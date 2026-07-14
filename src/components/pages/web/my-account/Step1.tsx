@@ -12,7 +12,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ShieldCheck, ShieldX, Mail, RotateCcw, CheckCircle2, ArrowRight } from "lucide-react";
+import { ShieldCheck, ShieldX, Mail, Phone, RotateCcw, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function AccountInfo() {
   const t = useTranslations("translation");
@@ -30,6 +30,11 @@ export default function AccountInfo() {
 
   const isVerified = userProfile?.data?.isVerified ?? false;
   const email = userProfile?.data?.email ?? "";
+  const phone = userProfile?.data?.phone ?? "";
+  const verificationIdentifier = email || phone;
+  const verificationPayload = email ? { email } : { phone };
+  const VerificationIcon = email ? Mail : Phone;
+  const verificationMethod = email ? "email" : "phone number";
 
   // Countdown timer for resend
   useEffect(() => {
@@ -52,7 +57,8 @@ export default function AccountInfo() {
 
   // Send OTP → move to otp step
   const handleSendOtp = () => {
-    resendOtp(email, {
+    if (!verificationIdentifier) return;
+    resendOtp(verificationPayload, {
       onSuccess: () => {
         setStep("otp");
         setResendTimer(60);
@@ -90,7 +96,7 @@ export default function AccountInfo() {
     const code = otp.join("");
     if (code.length < 6) return;
     verifyOtp(
-      { email, otp: code },
+      { ...verificationPayload, otp: code },
       {
         onSuccess: () => {
           setStep("success");
@@ -101,7 +107,8 @@ export default function AccountInfo() {
   };
 
   const handleResend = () => {
-    resendOtp(email, {
+    if (!verificationIdentifier) return;
+    resendOtp(verificationPayload, {
       onSuccess: () => {
         setOtp(["", "", "", "", "", ""]);
         setResendTimer(60);
@@ -159,7 +166,7 @@ export default function AccountInfo() {
                 Account Not Verified
               </p>
               <p className="text-xs mt-0.5 text-muted-foreground">
-                Click to verify your account via email OTP.
+                Click to verify your account via OTP.
               </p>
             </div>
           </div>
@@ -181,23 +188,23 @@ export default function AccountInfo() {
             <>
               <div className="px-6 pt-7 pb-5 text-center bg-yellow-500/10">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-yellow-500/20">
-                  <Mail className="w-7 h-7 text-red" />
+                  <VerificationIcon className="w-7 h-7 text-red" />
                 </div>
                 <DialogTitle className="text-base font-semibold text-red">
                   Verify Your Account
                 </DialogTitle>
                 <p className="text-xs text-muted-foreground mt-1">
-                  We'll send a 6-digit code to your email
+                  We'll send a 6-digit code to your {verificationMethod}
                 </p>
               </div>
 
               <div className="px-6 py-5 space-y-4">
                 <div className="rounded-lg bg-muted border border-border px-4 py-3 flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
-                  <span className="text-sm text-foreground font-medium truncate">{email}</span>
+                  <VerificationIcon className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <span className="text-sm text-foreground font-medium truncate">{verificationIdentifier}</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  A one-time password will be sent to the email address above. The code expires in 10 minutes.
+                  A one-time password will be sent to the {verificationMethod} above. The code expires in 10 minutes.
                 </p>
                 <Button
                   className="w-full"
@@ -220,13 +227,13 @@ export default function AccountInfo() {
             <>
               <div className="px-6 pt-7 pb-5 text-center bg-aqua/10">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-aqua/20">
-                  <Mail className="w-7 h-7 text-navy" />
+                  <VerificationIcon className="w-7 h-7 text-navy" />
                 </div>
                 <DialogTitle className="text-base font-semibold text-navy">
                   Enter Verification Code
                 </DialogTitle>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Sent to <span className="font-semibold text-foreground">{email}</span>
+                  Sent to <span className="font-semibold text-foreground">{verificationIdentifier}</span>
                 </p>
               </div>
 

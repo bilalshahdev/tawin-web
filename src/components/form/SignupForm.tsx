@@ -34,6 +34,7 @@ const SignupForm = () => {
             lastName: "",
             username: "",
             email: "",
+            phone: "",
             password: "",
             agreeTerms: undefined,
         },
@@ -97,6 +98,16 @@ const SignupForm = () => {
                         error={!!errors.email}
                         errorMessage={errors.email?.message}
                         {...register("email")}
+                    />
+
+                    <Input
+                        id="phone"
+                        type="tel"
+                        placeholder={t("phoneNumber")}
+                        variant="auth"
+                        error={!!errors.phone}
+                        errorMessage={errors.phone?.message}
+                        {...register("phone")}
                     />
 
                     <div className="relative">

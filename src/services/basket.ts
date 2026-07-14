@@ -7,6 +7,7 @@ export interface BasketApplicationData {
   occupation: string;
   unifiedCard: string;
   residenceCard: string;
+  masterCardNumber?: string;
   propertyArea: string;
   propertyType: "Leasehold" | string; // Matches your schema
   monthlyIncome: number;
@@ -14,7 +15,11 @@ export interface BasketApplicationData {
 }
 
 export const applyForBasket = async (payload: BasketApplicationData) => {
-  const { data } = await api.post("/api/users/apply-for-basket", payload);
+  const requestPayload = {
+    ...payload,
+    masterCardNumber: payload.masterCardNumber?.trim() || undefined,
+  };
+  const { data } = await api.post("/api/users/apply-for-basket", requestPayload);
   return data;
 };
 

@@ -3,8 +3,19 @@ import { setStaff } from "@/store/authSlice";
 import { AppDispatch } from "@/store/store";
 import { Address, Login, Signup } from "@/validations/auth";
 
+type OtpIdentifier = { email?: string; phone?: string };
+
+const toAuthIdentifier = (identifier: string): OtpIdentifier => {
+  const value = identifier.trim();
+  return value.includes("@") ? { email: value } : { phone: value };
+};
+
 export const loginUser = async (credentials: Login) => {
-  const { data } = await api.post("/api/auth/login", credentials);
+  const identifier = toAuthIdentifier(credentials.email);
+  const { data } = await api.post("/api/auth/login", {
+    ...identifier,
+    password: credentials.password,
+  });
   return data.data;
 };
 
@@ -14,12 +25,22 @@ export const loginStaff = async (credentials: Login) => {
 };
 
 export const signUpUser = async (credentials: Signup) => {
-  const { data } = await api.post("/api/auth/register", credentials);
+  const payload = {
+    ...credentials,
+    email: credentials.email?.trim() || undefined,
+    phone: credentials.phone?.trim() || undefined,
+  };
+  const { data } = await api.post("/api/auth/register", payload);
   return data.data;
 };
 
 export const signUpUserByAdmin = async (credentials: Signup) => {
-  const { data } = await api.post("/api/admin/users/register", credentials);
+  const payload = {
+    ...credentials,
+    email: credentials.email?.trim() || undefined,
+    phone: credentials.phone?.trim() || undefined,
+  };
+  const { data } = await api.post("/api/admin/users/register", payload);
   return data.data;
 };
 
@@ -120,12 +141,13 @@ export const resetPassword = async (payload: { email: string; token: string; new
   return data;
 };
 
-export const verifyOtp = async (payload: { email: string; otp: string }) => {
+export const verifyOtp = async (payload: OtpIdentifier & { otp: string }) => {
   const { data } = await api.post("/api/auth/verify-otp", payload);
   return data;
 };
 
-export const resendOtp = async (email: string) => {
-  const { data } = await api.post("/api/auth/resend-otp", { email });
+export const resendOtp = async (identifier: string | OtpIdentifier) => {
+  const payload = typeof identifier === "string" ? toAuthIdentifier(identifier) : identifier;
+  const { data } = await api.post("/api/auth/resend-otp", payload);
   return data;
 };

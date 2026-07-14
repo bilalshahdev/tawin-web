@@ -55,6 +55,7 @@ const ConstructionBasketForm = () => {
         });
     };
 
+    const masterCardRegistration = register("masterCardNumber");
     const inputStyles = "border-gray-300 rounded-lg h-[50px]";
     const selectTriggerStyles = "w-full py-[25px] border-gray-300 bg-gray-50 rounded-lg";
 
@@ -178,6 +179,24 @@ const ConstructionBasketForm = () => {
                             <p className="text-sm text-red-500">{errors.unifiedCard.message}</p>
                         )}
                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label>{t("masterCardNumber")}</Label>
+                    <Input
+                        placeholder={t("masterCardNumberPlaceholder")}
+                        className={inputStyles}
+                        inputMode="numeric"
+                        maxLength={16}
+                        {...masterCardRegistration}
+                        onChange={(e) => {
+                            e.target.value = e.target.value.replace(/\D/g, "").slice(0, 16);
+                            masterCardRegistration.onChange(e);
+                        }}
+                    />
+                    {errors.masterCardNumber && (
+                        <p className="text-sm text-red-500">{errors.masterCardNumber.message}</p>
+                    )}
                 </div>
 
                 {/* Property Type + Property Area */}

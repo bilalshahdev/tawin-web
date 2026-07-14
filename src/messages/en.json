@@ -19,6 +19,8 @@
     "addUser": "Add User",
     "addBrand": "Add Brand",
     "phoneNumber": "Phone Number",
+    "masterCardNumber": "Mastercard Number",
+    "masterCardNumberPlaceholder": "16 digits",
     "address": "Address",
     "taxNumber": "Tax Number",
     "cancel": "Cancel",

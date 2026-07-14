@@ -19,6 +19,8 @@
     "addUser": "إضافة مستخدم",
     "addBrand": "إضافة علامة تجارية",
     "phoneNumber": "رقم الهاتف",
+    "masterCardNumber": "رقم ماستر كارد",
+    "masterCardNumberPlaceholder": "16 رقمًا",
     "address": "العنوان",
     "taxNumber": "الرقم الضريبي",
     "cancel": "إلغاء",

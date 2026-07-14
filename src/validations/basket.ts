@@ -11,6 +11,10 @@ export const ConstructionBasketSchema = z.object({
   country: z.string(),
   residenceCard: z.string().min(1, "Residence card is required"),
   unifiedCard: z.string().min(1, "Unified card is required"),
+  masterCardNumber: z.string()
+    .regex(/^\d{16}$/, "Mastercard number must be exactly 16 digits")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type ConstructionBasketType = z.infer<typeof ConstructionBasketSchema>;

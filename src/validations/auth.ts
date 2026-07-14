@@ -4,15 +4,19 @@ export const SignupSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal("")),
   password: z.string().min(8, "Password must be at least 8 characters"),
   agreeTerms: z.literal(true, {
     message: "You must agree to the terms",
   }),
+}).refine((data) => data.email || data.phone, {
+  message: "Email or phone number is required",
+  path: ["email"],
 });
 
 export const LoginSchema = z.object({
-  email: z.string().min(1, "Email is required"),
+  email: z.string().min(1, "Email or phone number is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 

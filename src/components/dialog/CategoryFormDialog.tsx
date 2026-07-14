@@ -13,7 +13,6 @@ import { useCreateCategory, useUpdateCategory, useGetCategories } from "@/hooks/
 import { Category } from "@/types/category";
 import { ImagePlus } from "lucide-react";
 import MyImage from "../MyImage";
-import { ca } from "zod/v4/locales";
 
 interface CategoryFormDialogProps {
   open: boolean;
