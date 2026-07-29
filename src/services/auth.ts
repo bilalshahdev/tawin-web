@@ -3,7 +3,8 @@ import { setStaff } from "@/store/authSlice";
 import { AppDispatch } from "@/store/store";
 import { Address, Login, Signup } from "@/validations/auth";
 
-type OtpIdentifier = { email?: string; phone?: string };
+type OtpLang = "en" | "ar" | "ku";
+type OtpIdentifier = { email?: string; phone?: string; lang?: OtpLang };
 
 const toAuthIdentifier = (identifier: string): OtpIdentifier => {
   const value = identifier.trim();
@@ -24,7 +25,7 @@ export const loginStaff = async (credentials: Login) => {
   return data.data;
 };
 
-export const signUpUser = async (credentials: Signup) => {
+export const signUpUser = async (credentials: Signup & { lang?: OtpLang }) => {
   const payload = {
     ...credentials,
     email: credentials.email?.trim() || undefined,
@@ -34,7 +35,7 @@ export const signUpUser = async (credentials: Signup) => {
   return data.data;
 };
 
-export const signUpUserByAdmin = async (credentials: Signup) => {
+export const signUpUserByAdmin = async (credentials: Signup & { lang?: OtpLang }) => {
   const payload = {
     ...credentials,
     email: credentials.email?.trim() || undefined,

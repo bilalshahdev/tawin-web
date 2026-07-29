@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { AuthHeader } from "../auth/AuthHeader";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Signup, SignupSchema } from "@/validations/auth";
@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
     const t = useTranslations("translation");
+    const locale = useLocale();
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const { mutate: signup, isPending } = useSignup();
@@ -43,7 +44,8 @@ const SignupForm = () => {
     const agreeTerms = watch("agreeTerms");
 
     const onSubmit = (data: Signup) => {
-        signup(data,
+        const otpLang = (locale === "ar" || locale === "ku" ? locale : "en") as "en" | "ar" | "ku";
+        signup({ ...data, lang: otpLang },
             {
                 onSuccess: (responseData: any) => {
                     localStorage.setItem("token", responseData.token);

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useUserProfile, useUpdateUserProfile, useVerifyOtp, useResendOtp } from "@/hooks/useAuth";
 import { ProfileUpdateSchema, ProfileUpdate } from "@/validations/auth";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ import { ShieldCheck, ShieldX, Mail, Phone, RotateCcw, CheckCircle2, ArrowRight 
 
 export default function AccountInfo() {
   const t = useTranslations("translation");
+  const locale = useLocale();
   const { data: userProfile, isLoading, refetch } = useUserProfile();
   const { mutate: updateUserProfile, isPending: isUpdatingProfile } = useUpdateUserProfile();
   const { mutate: verifyOtp, isPending: isVerifying } = useVerifyOtp();
@@ -32,7 +33,8 @@ export default function AccountInfo() {
   const email = userProfile?.data?.email ?? "";
   const phone = userProfile?.data?.phone ?? "";
   const verificationIdentifier = email || phone;
-  const verificationPayload = email ? { email } : { phone };
+  const otpLang = (locale === "ar" || locale === "ku" ? locale : "en") as "en" | "ar" | "ku";
+  const verificationPayload = email ? { email, lang: otpLang } : { phone, lang: otpLang };
   const VerificationIcon = email ? Mail : Phone;
   const verificationMethod = email ? "email" : "phone number";
 
