@@ -15,11 +15,13 @@ import { toast } from "sonner";
 interface ResetPasswordFormProps {
   token: string;
   email: string;
+  phone?: string;
 }
 
 export default function ResetPasswordForm({
   token,
   email,
+  phone = "",
 }: ResetPasswordFormProps) {
   const t = useTranslations("translation");
 
@@ -35,6 +37,7 @@ export default function ResetPasswordForm({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
       email: email || "",
+      phone: phone || "",
       token: token || "",
       newPassword: "",
       confirmPassword: "",
@@ -45,7 +48,8 @@ export default function ResetPasswordForm({
   useEffect(() => {
     if (token) setValue("token", token);
     if (email) setValue("email", email);
-  }, [token, email, setValue]);
+    if (phone) setValue("phone", phone);
+  }, [token, email, phone, setValue]);
 
   const onSubmit = (data: ResetPasswordFormData) => {
     if (!data.token) {
@@ -58,6 +62,7 @@ export default function ResetPasswordForm({
     // Call your custom mutation service matching the payload it expects
     sendResetRequest({
       email: data.email || "",
+      phone: data.phone || "",
       token: data.token,
       newPassword: data.newPassword,
     });
@@ -80,6 +85,7 @@ export default function ResetPasswordForm({
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <input type="hidden" {...register("token")} />
           <input type="hidden" {...register("email")} />
+          <input type="hidden" {...register("phone")} />
 
           <Input
             id="newPassword"

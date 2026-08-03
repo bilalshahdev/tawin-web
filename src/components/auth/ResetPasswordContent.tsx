@@ -7,6 +7,7 @@ export default function ResetPasswordContent() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token") ?? "";
     const email = searchParams.get("email") ?? "";
+    const phone = searchParams.get("phone") ?? "";
 
-    return <ResetPasswordForm token={token} email={email} />;
+    return <ResetPasswordForm token={token} email={email} phone={phone} />;
 }

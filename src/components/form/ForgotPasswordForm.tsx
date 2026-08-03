@@ -2,20 +2,36 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgotPassword, ForgotPasswordSchema } from "@/validations/auth";
-import { useForgotPassword } from "@/hooks/useAuth";
+import { useForgotPassword, useResetPassword } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { SpinnerLoader } from "@/components/common/SpinnerLoader";
-// Remove ResetPasswordForm import if it's no longer needed inline here
+
+type OtpLang = "en" | "ar" | "ku";
+
+const toIdentifierPayload = (identifier: string, lang: OtpLang) => {
+  const value = identifier.trim();
+  return value.includes("@")
+    ? { email: value, lang }
+    : { phone: value, lang };
+};
 
 const ForgotPasswordForm = () => {
   const t = useTranslations("translation");
+  const locale = useLocale();
+  const otpLang = (locale === "ar" || locale === "ku" ? locale : "en") as OtpLang;
   const { mutate: sendResetLink, isPending, isSuccess } = useForgotPassword();
-  const [submittedEmail, setSubmittedEmail] = useState("");
+  const { mutate: resetPassword, isPending: isResetting } = useResetPassword();
+  const [submittedIdentifier, setSubmittedIdentifier] = useState("");
+  const [phoneResetPayload, setPhoneResetPayload] = useState<{ phone: string; lang: OtpLang } | null>(null);
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const {
     register,
@@ -23,53 +39,120 @@ const ForgotPasswordForm = () => {
     formState: { errors },
   } = useForm<ForgotPassword>({
     resolver: zodResolver(ForgotPasswordSchema),
-    defaultValues: { email: "" },
+    defaultValues: { identifier: "" },
   });
 
   const onSubmit = (data: ForgotPassword) => {
-    setSubmittedEmail(data.email);
-    sendResetLink(data.email);
+    const payload = toIdentifierPayload(data.identifier, otpLang);
+    setSubmittedIdentifier(data.identifier.trim());
+    sendResetLink(payload, {
+      onSuccess: () => {
+        if (payload.phone) {
+          setPhoneResetPayload({ phone: payload.phone, lang: otpLang });
+        }
+      },
+    });
   };
 
-  // Fix: Show a clean success state instead of mounting ResetPasswordForm inline
+  const handlePhoneReset = () => {
+    setPasswordError("");
+    if (!phoneResetPayload) return;
+    if (otp.trim().length !== 6) {
+      setPasswordError(t("otpLengthError"));
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError(t("passwordsDoNotMatch"));
+      return;
+    }
+    resetPassword({
+      phone: phoneResetPayload.phone,
+      token: otp.trim(),
+      newPassword,
+    });
+  };
+
+  if (phoneResetPayload) {
+    return (
+      <section className="flex w-full flex-col items-center justify-center px-8 lg:w-1/2 xl:px-24">
+        <div className="w-full max-w-sm space-y-10">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-medium tracking-tight text-foreground">
+              {t("enterOtpTitle")}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {t("phoneOtpResetDescription")}{" "}
+              <span className="font-semibold text-foreground" dir="ltr">
+                {phoneResetPayload.phone}
+              </span>
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <Input
+              id="otp"
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder={t("otpPlaceholder")}
+              variant="auth"
+              value={otp}
+              onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))}
+            />
+            <Input
+              id="newPassword"
+              type="password"
+              placeholder={t("newPassword")}
+              variant="auth"
+              value={newPassword}
+              onChange={(event) => setNewPassword(event.target.value)}
+            />
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder={t("confirmNewPassword")}
+              variant="auth"
+              error={!!passwordError}
+              errorMessage={passwordError}
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+            />
+
+            <Button type="button" variant="primary" disabled={isResetting} onClick={handlePhoneReset}>
+              {isResetting ? <SpinnerLoader /> : t("updatePassword")}
+            </Button>
+          </div>
+
+          <div className="text-center">
+            <Link href="/auth/signin" className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium">
+              {t("backToLogin")}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (isSuccess) {
     return (
       <section className="flex w-full flex-col items-center justify-center px-8 lg:w-1/2 xl:px-24">
         <div className="w-full max-w-sm space-y-6 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-aqua/10 text-aqua">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
             </svg>
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-medium tracking-tight text-foreground">
-              Check your email
+              {t("checkEmailTitle")}
             </h1>
             <p className="text-sm text-muted-foreground">
-              We have sent a secure password reset link to{" "}
-              <span className="font-semibold text-foreground">
-                {submittedEmail}
-              </span>
-              . Please check your inbox and click the link to reset your
-              credentials.
+              {t("checkEmailDescription")}{" "}
+              <span className="font-semibold text-foreground">{submittedIdentifier}</span>
             </p>
           </div>
           <div className="pt-4">
-            <Link
-              href="/auth/signin"
-              className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium"
-            >
+            <Link href="/auth/signin" className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium">
               {t("backToLogin")}
             </Link>
           </div>
@@ -92,25 +175,22 @@ const ForgotPasswordForm = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <Input
-            id="email"
+            id="identifier"
             type="text"
-            placeholder={t("emailPlaceholder")}
+            placeholder={t("emailOrPhonePlaceholder")}
             variant="auth"
-            error={!!errors.email}
-            errorMessage={errors.email?.message}
-            {...register("email")}
+            error={!!errors.identifier}
+            errorMessage={errors.identifier?.message}
+            {...register("identifier")}
           />
 
           <Button type="submit" variant="primary" disabled={isPending}>
-            {isPending ? <SpinnerLoader /> : t("sendResetLink")}
+            {isPending ? <SpinnerLoader /> : t("sendResetInstructions")}
           </Button>
         </form>
 
         <div className="text-center">
-          <Link
-            href="/auth/signin"
-            className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium"
-          >
+          <Link href="/auth/signin" className="text-sm text-aqua hover:text-aqua/80 transition-colors font-medium">
             {t("backToLogin")}
           </Link>
         </div>

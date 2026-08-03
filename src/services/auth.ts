@@ -132,12 +132,12 @@ export const updateAddress = async ({ id, data }: { id: string; data: Address })
   return response.data;
 };
 
-export const forgotPassword = async (email: string) => {
-  const { data } = await api.post("/api/auth/forgot-password", { email });
+export const forgotPassword = async (payload: OtpIdentifier) => {
+  const { data } = await api.post("/api/auth/forgot-password", payload);
   return data;
 };
 
-export const resetPassword = async (payload: { email: string; token: string; newPassword: string }) => {
+export const resetPassword = async (payload: { email?: string; phone?: string; token: string; newPassword: string }) => {
   const { data } = await api.post("/api/auth/reset-password", payload);
   return data;
 };
