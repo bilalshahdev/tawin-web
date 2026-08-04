@@ -19,6 +19,7 @@ const SignupForm = () => {
     const t = useTranslations("translation");
     const locale = useLocale();
     const router = useRouter();
+    const [signupMethod, setSignupMethod] = useState<"email" | "phone">("phone");
     const [showPassword, setShowPassword] = useState(false);
     const { mutate: signup, isPending } = useSignup();
 
@@ -45,7 +46,12 @@ const SignupForm = () => {
 
     const onSubmit = (data: Signup) => {
         const otpLang = (locale === "ar" || locale === "ku" ? locale : "en") as "en" | "ar" | "ku";
-        signup({ ...data, lang: otpLang },
+        signup({
+            ...data,
+            email: signupMethod === "email" ? data.email : "",
+            phone: signupMethod === "phone" ? data.phone : "",
+            lang: otpLang,
+        },
             {
                 onSuccess: (responseData: any) => {
                     localStorage.setItem("token", responseData.token);
@@ -92,25 +98,52 @@ const SignupForm = () => {
                         {...register("username")}
                     />
 
-                    <Input
-                        id="email"
-                        type="email"
-                        placeholder={t("emailLabel")}
-                        variant="auth"
-                        error={!!errors.email}
-                        errorMessage={errors.email?.message}
-                        {...register("email")}
-                    />
+                    <div className="grid grid-cols-2 gap-2 rounded-full bg-muted p-1">
+                        <Button
+                            type="button"
+                            variant={signupMethod === "phone" ? "primary" : "ghost"}
+                            className="h-9 rounded-full text-xs"
+                            onClick={() => {
+                                setSignupMethod("phone");
+                                setValue("email", "", { shouldValidate: true });
+                            }}
+                        >
+                            {t("phoneNumber")}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant={signupMethod === "email" ? "primary" : "ghost"}
+                            className="h-9 rounded-full text-xs"
+                            onClick={() => {
+                                setSignupMethod("email");
+                                setValue("phone", "", { shouldValidate: true });
+                            }}
+                        >
+                            {t("emailLabel")}
+                        </Button>
+                    </div>
 
-                    <Input
-                        id="phone"
-                        type="tel"
-                        placeholder={t("phoneNumber")}
-                        variant="auth"
-                        error={!!errors.phone}
-                        errorMessage={errors.phone?.message}
-                        {...register("phone")}
-                    />
+                    {signupMethod === "email" ? (
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder={t("emailLabel")}
+                            variant="auth"
+                            error={!!errors.email}
+                            errorMessage={errors.email?.message}
+                            {...register("email")}
+                        />
+                    ) : (
+                        <Input
+                            id="phone"
+                            type="tel"
+                            placeholder={t("phoneNumber")}
+                            variant="auth"
+                            error={!!errors.phone}
+                            errorMessage={errors.phone?.message}
+                            {...register("phone")}
+                        />
+                    )}
 
                     <div className="relative">
                         <Input

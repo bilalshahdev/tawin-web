@@ -32,11 +32,11 @@ export default function AccountInfo() {
   const isVerified = userProfile?.data?.isVerified ?? false;
   const email = userProfile?.data?.email ?? "";
   const phone = userProfile?.data?.phone ?? "";
-  const verificationIdentifier = email || phone;
+  const verificationIdentifier = phone || email;
   const otpLang = (locale === "ar" || locale === "ku" ? locale : "en") as "en" | "ar" | "ku";
-  const verificationPayload = email ? { email, lang: otpLang } : { phone, lang: otpLang };
-  const VerificationIcon = email ? Mail : Phone;
-  const verificationMethod = email ? "email" : "phone number";
+  const verificationPayload = phone ? { phone, lang: otpLang } : { email, lang: otpLang };
+  const VerificationIcon = phone ? Phone : Mail;
+  const verificationMethod = phone ? "phone number" : "email";
 
   // Countdown timer for resend
   useEffect(() => {
