@@ -9,7 +9,25 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: "images.unsplash.com",
                 port: "",
-                pathname: "/",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "taawonconst.iq",
+                port: "",
+                pathname: "/uploads/**",
+            },
+            {
+                protocol: "https",
+                hostname: "www.taawonconst.iq",
+                port: "",
+                pathname: "/uploads/**",
+            },
+            {
+                protocol: "http",
+                hostname: "taawonconst.iq",
+                port: "",
+                pathname: "/uploads/**",
             },
            {
                 protocol: "http",

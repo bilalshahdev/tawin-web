@@ -19,6 +19,11 @@ const normalizeUrl = (url: string) => {
   return url.replace(/([^:]\/)\/+/g, "$1");
 };
 
+const isUploadUrl = (url: string) => (
+  url.startsWith("/uploads") ||
+  url.includes("/uploads/")
+);
+
 const MyImage = ({
   src,
   alt,
@@ -90,6 +95,7 @@ const MyImage = ({
         src={resolvedSrc as string}
         alt={alt}
         fill={fill}
+        unoptimized={isUploadUrl(resolvedSrc as string) || rest.unoptimized}
         className={cn(
           "object-cover",
           !isAlreadyLoaded && "transition-opacity duration-500 ease-in-out",
@@ -123,6 +129,7 @@ const MyImage = ({
       <Image
         src={resolvedSrc as string}
         alt={alt}
+        unoptimized={isUploadUrl(resolvedSrc as string) || rest.unoptimized}
         className={cn(
           "object-cover w-full h-full",
           !isAlreadyLoaded && "transition-opacity duration-500 ease-in-out",

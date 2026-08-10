@@ -1,6 +1,7 @@
 import api from "@/lib/axios";
 import { setStaff } from "@/store/authSlice";
 import { AppDispatch } from "@/store/store";
+import { normalizePhone } from "@/utils/normalizePhone";
 import { Address, Login, Signup } from "@/validations/auth";
 
 type OtpLang = "en" | "ar" | "ku";
@@ -8,7 +9,7 @@ type OtpIdentifier = { email?: string; phone?: string; lang?: OtpLang };
 
 const toAuthIdentifier = (identifier: string): OtpIdentifier => {
   const value = identifier.trim();
-  return value.includes("@") ? { email: value } : { phone: value };
+  return value.includes("@") ? { email: value.toLowerCase() } : { phone: normalizePhone(value) };
 };
 
 export const loginUser = async (credentials: Login) => {
@@ -28,8 +29,8 @@ export const loginStaff = async (credentials: Login) => {
 export const signUpUser = async (credentials: Signup & { lang?: OtpLang }) => {
   const payload = {
     ...credentials,
-    email: credentials.email?.trim() || undefined,
-    phone: credentials.phone?.trim() || undefined,
+    email: credentials.email?.trim().toLowerCase() || undefined,
+    phone: normalizePhone(credentials.phone),
   };
   const { data } = await api.post("/api/auth/register", payload);
   return data.data;
@@ -38,8 +39,8 @@ export const signUpUser = async (credentials: Signup & { lang?: OtpLang }) => {
 export const signUpUserByAdmin = async (credentials: Signup & { lang?: OtpLang }) => {
   const payload = {
     ...credentials,
-    email: credentials.email?.trim() || undefined,
-    phone: credentials.phone?.trim() || undefined,
+    email: credentials.email?.trim().toLowerCase() || undefined,
+    phone: normalizePhone(credentials.phone),
   };
   const { data } = await api.post("/api/admin/users/register", payload);
   return data.data;
@@ -133,22 +134,38 @@ export const updateAddress = async ({ id, data }: { id: string; data: Address })
 };
 
 export const forgotPassword = async (payload: OtpIdentifier) => {
-  const { data } = await api.post("/api/auth/forgot-password", payload);
+  const { data } = await api.post("/api/auth/forgot-password", {
+    ...payload,
+    email: payload.email?.trim().toLowerCase(),
+    phone: normalizePhone(payload.phone),
+  });
   return data;
 };
 
 export const resetPassword = async (payload: { email?: string; phone?: string; token: string; newPassword: string }) => {
-  const { data } = await api.post("/api/auth/reset-password", payload);
+  const { data } = await api.post("/api/auth/reset-password", {
+    ...payload,
+    email: payload.email?.trim().toLowerCase(),
+    phone: normalizePhone(payload.phone),
+  });
   return data;
 };
 
 export const verifyOtp = async (payload: OtpIdentifier & { otp: string }) => {
-  const { data } = await api.post("/api/auth/verify-otp", payload);
+  const { data } = await api.post("/api/auth/verify-otp", {
+    ...payload,
+    email: payload.email?.trim().toLowerCase(),
+    phone: normalizePhone(payload.phone),
+  });
   return data;
 };
 
 export const resendOtp = async (identifier: string | OtpIdentifier) => {
   const payload = typeof identifier === "string" ? toAuthIdentifier(identifier) : identifier;
-  const { data } = await api.post("/api/auth/resend-otp", payload);
+  const { data } = await api.post("/api/auth/resend-otp", {
+    ...payload,
+    email: payload.email?.trim().toLowerCase(),
+    phone: normalizePhone(payload.phone),
+  });
   return data;
 };

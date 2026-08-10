@@ -66,9 +66,9 @@ export default function UserDetailDialog({
                 </button>
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-xs text-gray-400 truncate">{user.email}</span>
+                <span className="text-xs text-gray-400 truncate">{user.email || user.phone || "-"}</span>
                 <button
-                  onClick={() => navigator.clipboard.writeText(user.email)}
+                  onClick={() => navigator.clipboard.writeText(user.email || user.phone || "")}
                   className="text-purple-500 hover:text-aqua transition-colors shrink-0"
                 >
                   <Copy size={12} />

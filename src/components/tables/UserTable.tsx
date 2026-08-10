@@ -108,7 +108,7 @@ const UserTable = ({ data, pagination, isLoading, page, setPage }: UserTableProp
   // -------------------------
 
   // Build columns based on permissions
-  const baseCols = ["userCode", "name", "email", "username", "verified"];
+  const baseCols = ["userCode", "name", "email", "phone", "username", "verified"];
   const cols = canDelete ? [...baseCols, "actions"] : baseCols;
 
   const handleRowClick = (item: any) => {
@@ -125,7 +125,10 @@ const UserTable = ({ data, pagination, isLoading, page, setPage }: UserTableProp
         {item.firstName} {item.lastName}
       </TableCell>
       <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
-        {item.email}
+        {item.email || "-"}
+      </TableCell>
+      <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
+        {item.phone || "-"}
       </TableCell>
       <TableCell className="cursor-pointer" onClick={() => handleRowClick(item)}>
         {item.username}
