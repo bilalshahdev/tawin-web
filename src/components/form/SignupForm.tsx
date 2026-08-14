@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { Signup, SignupSchema } from "@/validations/auth";
 import { useSignup } from "@/hooks/useAuth";
 import { SpinnerLoader } from "@/components/common/SpinnerLoader";
 import { useRouter } from "next/navigation";
+import { normalizePhone } from "@/utils/normalizePhone";
 
 const SignupForm = () => {
     const t = useTranslations("translation");
@@ -43,6 +44,7 @@ const SignupForm = () => {
     });
 
     const agreeTerms = watch("agreeTerms");
+    const phoneValue = watch("phone") || "";
 
     const onSubmit = (data: Signup) => {
         const otpLang = (locale === "ar" || locale === "ku" ? locale : "en") as "en" | "ar" | "ku";
@@ -55,10 +57,16 @@ const SignupForm = () => {
             {
                 onSuccess: (responseData: any) => {
                     localStorage.setItem("token", responseData.token);
-                    router.push("/");
+                    sessionStorage.setItem("open_account_verification", "1");
+                    router.push("/my-account");
                 }
             }
         );
+    };
+
+    const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = normalizePhone(event.target.value)?.replace(/\D/g, "").slice(0, 15) || "";
+        setValue("phone", value, { shouldValidate: true });
     };
 
     return (
@@ -134,15 +142,24 @@ const SignupForm = () => {
                             {...register("email")}
                         />
                     ) : (
+                        <>
                         <Input
                             id="phone"
                             type="tel"
-                            placeholder={t("phoneNumber")}
+                            placeholder="0096477XXXXXXXX"
                             variant="auth"
+                            inputMode="numeric"
+                            maxLength={15}
                             error={!!errors.phone}
                             errorMessage={errors.phone?.message}
                             {...register("phone")}
+                            value={phoneValue}
+                            onChange={handlePhoneChange}
                         />
+                        <p className="text-xs text-muted-foreground -mt-4">
+                            Example: 0096477XXXXXXXX. Do not write the local leading zero, like 077 or 078.
+                        </p>
+                        </>
                     )}
 
                     <div className="relative">

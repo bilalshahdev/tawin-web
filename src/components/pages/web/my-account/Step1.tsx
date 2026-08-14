@@ -45,6 +45,16 @@ export default function AccountInfo() {
     return () => clearInterval(id);
   }, [resendTimer]);
 
+  useEffect(() => {
+    if (isVerified || !verificationIdentifier) return;
+    if (sessionStorage.getItem("open_account_verification") !== "1") return;
+
+    sessionStorage.removeItem("open_account_verification");
+    setVerifyDialogOpen(true);
+    setStep("otp");
+    setTimeout(() => inputRefs.current[0]?.focus(), 100);
+  }, [isVerified, verificationIdentifier]);
+
   // Reset dialog state when closed
   const handleDialogChange = (open: boolean) => {
     setVerifyDialogOpen(open);
@@ -196,7 +206,7 @@ export default function AccountInfo() {
                   Verify Your Account
                 </DialogTitle>
                 <p className="text-xs text-muted-foreground mt-1">
-                  We'll send a 6-digit code to your {verificationMethod}
+                  Use the 6-digit code already sent to your {verificationMethod}, or request a new one.
                 </p>
               </div>
 
@@ -206,15 +216,25 @@ export default function AccountInfo() {
                   <span className="text-sm text-foreground font-medium truncate">{verificationIdentifier}</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  A one-time password will be sent to the {verificationMethod} above. The code expires in 10 minutes.
+                  If you just registered, enter the OTP you already received. It expires in 10 minutes.
                 </p>
                 <Button
                   className="w-full"
                   variant="primary"
+                  onClick={() => {
+                    setStep("otp");
+                    setTimeout(() => inputRefs.current[0]?.focus(), 100);
+                  }}
+                >
+                  Enter Existing Code
+                </Button>
+                <Button
+                  className="w-full"
+                  variant="outline"
                   onClick={handleSendOtp}
                   disabled={isResending}
                 >
-                  {isResending ? "Sending..." : "Send Verification Code"}
+                  {isResending ? "Sending..." : "Send New Code"}
                 </Button>
                 <Button variant="ghost" className="w-full text-sm text-muted-foreground"
                   onClick={() => handleDialogChange(false)}>

@@ -1,11 +1,20 @@
 import { z } from "zod";
+import { IRAQI_PHONE_PATTERN, normalizePhone } from "@/utils/normalizePhone";
+
+const optionalIraqiPhoneSchema = z.string()
+  .optional()
+  .or(z.literal(""))
+  .refine(
+    (value) => !value || IRAQI_PHONE_PATTERN.test(normalizePhone(value) || ""),
+    "Use format 0096477XXXXXXXX or 0096478XXXXXXXX",
+  );
 
 export const SignupSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
-  phone: z.string().optional().or(z.literal("")),
+  phone: optionalIraqiPhoneSchema,
   password: z.string().min(8, "Password must be at least 8 characters"),
   agreeTerms: z.literal(true, {
     message: "You must agree to the terms",
@@ -68,7 +77,7 @@ export const ForgotPasswordSchema = z.object({
 
 export const ResetPasswordSchema = z.object({
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
-  phone: z.string().optional().or(z.literal("")),
+  phone: optionalIraqiPhoneSchema,
   token: z.string().optional().or(z.literal("")), // Allows initial empty strings safely
   newPassword: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Confirm password is required"),
