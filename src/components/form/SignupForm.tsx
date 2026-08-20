@@ -146,7 +146,7 @@ const SignupForm = () => {
                         <Input
                             id="phone"
                             type="tel"
-                            placeholder="0096477XXXXXXXX"
+                            placeholder="009647XXXXXXXXX"
                             variant="auth"
                             inputMode="numeric"
                             maxLength={15}
@@ -157,7 +157,7 @@ const SignupForm = () => {
                             onChange={handlePhoneChange}
                         />
                         <p className="text-xs text-muted-foreground -mt-4">
-                            Example: 0096477XXXXXXXX. Do not write the local leading zero, like 077 or 078.
+                            Example: 009647XXXXXXXXX. Write 00964, then the mobile number without the first 0.
                         </p>
                         </>
                     )}

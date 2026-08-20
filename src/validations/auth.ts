@@ -6,7 +6,7 @@ const optionalIraqiPhoneSchema = z.string()
   .or(z.literal(""))
   .refine(
     (value) => !value || IRAQI_PHONE_PATTERN.test(normalizePhone(value) || ""),
-    "Use format 0096477XXXXXXXX or 0096478XXXXXXXX",
+    "Use format 009647XXXXXXXXX",
   );
 
 export const SignupSchema = z.object({
