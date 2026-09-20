@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { ProductsResponse,Product } from "@/types/product";
+import { ProductsResponse, Product } from "@/types/product";
 
 interface ProductParams {
   category?: string;
@@ -7,20 +7,25 @@ interface ProductParams {
   featuredProducts?: boolean;
   reduced?: boolean;
   outOfStock?: boolean;
+  archived?: boolean;
+  includeArchived?: boolean;
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 export const getProducts = async (params?: ProductParams, options?: { page?: number; limit?: number }) => {
-  const { data } = await api.get("/api/products", { params, ...options });
+  const { data } = await api.get("/api/products", { params: { ...params, ...options } });
   return data;
 };
 
 export const getProductBySlug = async (slug: string): Promise<Product> => {
-  const { data } = await api.get(`/api/products/slug/${slug}`);
+  const { data } = await api.get("/api/products/slug/" + slug);
   return data.data;
 };
 
 export const getProductsByCategory = async (categoryId: string, options?: { page?: number; limit?: number }): Promise<ProductsResponse> => {
-  const { data } = await api.get(`/api/products/category/${categoryId}`, { params: options });
+  const { data } = await api.get("/api/products/category/" + categoryId, { params: options });
   return data;
 };
 
@@ -34,7 +39,7 @@ export const addProduct = async (formData: FormData): Promise<any> => {
 };
 
 export const updateProduct = async (id: string, formData: FormData): Promise<any> => {
-  const { data } = await api.patch(`/api/products/${id}`, formData, {
+  const { data } = await api.patch("/api/products/" + id, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -42,8 +47,23 @@ export const updateProduct = async (id: string, formData: FormData): Promise<any
   return data;
 };
 
+export const importProducts = async (products: Record<string, unknown>[]): Promise<any> => {
+  const { data } = await api.post("/api/products/import", { products });
+  return data;
+};
+
+export const archiveProduct = async (id: string): Promise<any> => {
+  const { data } = await api.patch("/api/products/" + id + "/archive");
+  return data;
+};
+
+export const restoreProduct = async (id: string): Promise<any> => {
+  const { data } = await api.patch("/api/products/" + id + "/restore");
+  return data;
+};
+
 export const deleteProduct = async (id: string): Promise<any> => {
-  const { data } = await api.delete(`/api/products/${id}`);
+  const { data } = await api.delete("/api/products/" + id);
   return data;
 };
 
@@ -53,6 +73,6 @@ export const getLowStockProducts = async (params?: { allProducts?: boolean; feat
 };
 
 export const updateProductStock = async (id: string, stock: number): Promise<any> => {
-  const { data } = await api.patch(`/api/product/${id}/stock`, { stock });
+  const { data } = await api.patch("/api/products/" + id + "/stock", { quantity: stock });
   return data;
 };

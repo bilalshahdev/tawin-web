@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Image from "@/components/MyImage";
 import { TableCell } from "@/components/ui/table";
 import { DataTable } from "@/components/DataTable";
-import { Trash2, Edit3 } from "lucide-react";
+import { Archive, Edit3, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "../dialog/ConfirmDialog";
-import { useDeleteProduct } from "@/hooks/useProducts";
+import { useArchiveProduct, useRestoreProduct } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
 import { getLocalizedText } from "@/utils/getLocalizedText";
 
@@ -34,98 +33,114 @@ const ProductTable = ({
   data,
   isLoading,
   pagination,
-  page,
   setPage,
   canDelete = false,
   canPatch = false,
-  canPost = false,
 }: ProductTableProps) => {
   const { data: settings } = useSettings();
-  const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
+  const { mutate: archiveProduct, isPending: isArchiving } = useArchiveProduct();
+  const { mutate: restoreProduct, isPending: isRestoring } = useRestoreProduct();
   const router = useRouter();
 
-  // Show actions column only if at least one action is permitted
   const showActionsCol = canDelete || canPatch;
-
-  const baseCols = ["no", "product", "price", "dateCreated"];
+  const baseCols = ["no", "product", "productCode", "price", "dateCreated"];
   const cols = showActionsCol ? [...baseCols, "actions"] : baseCols;
 
   const filteredData = data.filter((item) => {
-    if (activeTab === "All Products") return true;
+    if (activeTab === "All Products" || activeTab === "Archived") return true;
     return item.status?.en === activeTab;
   });
 
   const handleNavigate = (locale: string, slug: string) => {
-    router.push(`/${locale}/admin/product-list/${slug}`);
+    router.push("/" + locale + "/admin/product-list/" + slug);
   };
 
-  const row = (item: any, index: number, locale: "en" | "ar") => (
-    <>
-      <TableCell className="cursor-pointer" onClick={() => handleNavigate(locale, item.slug)}>
-        {index + 1}
-      </TableCell>
-      <TableCell className="cursor-pointer" onClick={() => handleNavigate(locale, item.slug)}>
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 relative overflow-hidden rounded-md border">
-            <Image
-              src={item?.photo || ""}
-              alt={getLocalizedText(item.title, locale) || ""}
-              fill
-              className="object-cover"
-            />
+  const row = (item: any, index: number, locale: "en" | "ar") => {
+    const isArchived = item.isArchived === true;
+    const productName = getLocalizedText(item.title, locale) || "Product";
+
+    return (
+      <>
+        <TableCell className="cursor-pointer" onClick={() => !isArchived && handleNavigate(locale, item.slug)}>
+          {index + 1}
+        </TableCell>
+        <TableCell className="cursor-pointer" onClick={() => !isArchived && handleNavigate(locale, item.slug)}>
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 relative overflow-hidden rounded-md border">
+              <Image
+                src={item?.photo || ""}
+                alt={productName}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="min-w-0">
+              <span className="font-medium text-sm capitalize block truncate">{productName}</span>
+              {isArchived && <span className="text-[11px] text-red-500">Archived</span>}
+            </div>
           </div>
-          <span className="font-medium text-sm capitalize">{getLocalizedText(item.title, locale)}</span>
-        </div>
-      </TableCell>
-      <TableCell className="text-sm font-medium cursor-pointer" onClick={() => handleNavigate(locale, item.slug)}>
-        {settings?.currencySymbol}{item.price}
-      </TableCell>
-      <TableCell className="text-sm cursor-pointer" onClick={() => handleNavigate(locale, item.slug)}>
-        {new Date(item.createdAt?.$date || item.createdAt).toLocaleDateString()}
-      </TableCell>
+        </TableCell>
+        <TableCell className="text-xs text-muted-foreground">
+          {item.productTag || item._id?.slice(-8) || "-"}
+        </TableCell>
+        <TableCell className="text-sm font-medium cursor-pointer" onClick={() => !isArchived && handleNavigate(locale, item.slug)}>
+          {settings?.currencySymbol}{item.price}
+        </TableCell>
+        <TableCell className="text-sm cursor-pointer" onClick={() => !isArchived && handleNavigate(locale, item.slug)}>
+          {new Date(item.createdAt?.$date || item.createdAt).toLocaleDateString()}
+        </TableCell>
 
-      {/* Actions column — only rendered when at least one action is allowed */}
-      {showActionsCol && (
-        <TableCell onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center gap-2">
-            {/* Edit — only if patch is allowed */}
-            {canPatch && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-400 hover:text-aqua"
-                onClick={() => handleNavigate(locale, item.slug)}
-              >
-                <Edit3 size={16} />
-              </Button>
-            )}
-
-            {/* Delete — only if delete is allowed */}
-            {canDelete && (
-              <ConfirmDialog
-                title="Delete Product"
-                description={`Are you sure you want to delete ${getLocalizedText(item.title, locale)}?`}
-                variant="destructive"
-                loading={isDeleting}
-                onConfirm={(close) => {
-                  deleteProduct(item._id);
-                  close();
-                }}
-              >
+        {showActionsCol && (
+          <TableCell onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2">
+              {canPatch && !isArchived && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-gray-400 hover:text-red-500"
+                  className="h-8 w-8 text-gray-400 hover:text-aqua"
+                  onClick={() => handleNavigate(locale, item.slug)}
                 >
-                  <Trash2 size={16} />
+                  <Edit3 size={16} />
                 </Button>
-              </ConfirmDialog>
-            )}
-          </div>
-        </TableCell>
-      )}
-    </>
-  );
+              )}
+
+              {canDelete && !isArchived && (
+                <ConfirmDialog
+                  title="Archive Product"
+                  description={"Archive " + productName + "? It will be hidden from customers but kept in history."}
+                  loading={isArchiving}
+                  onConfirm={(close) => {
+                    archiveProduct(item._id);
+                    close();
+                  }}
+                >
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500">
+                    <Archive size={16} />
+                  </Button>
+                </ConfirmDialog>
+              )}
+
+              {canPatch && isArchived && (
+                <ConfirmDialog
+                  title="Restore Product"
+                  description={"Restore " + productName + " to the active product list?"}
+                  loading={isRestoring}
+                  onConfirm={(close) => {
+                    restoreProduct(item._id);
+                    close();
+                  }}
+                >
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-aqua">
+                    <RotateCcw size={16} />
+                  </Button>
+                </ConfirmDialog>
+              )}
+            </div>
+          </TableCell>
+        )}
+      </>
+    );
+  };
 
   return (
     <DataTable

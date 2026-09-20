@@ -21,3 +21,9 @@ export const removeFromCart = async (productId: string) => {
   });
   return data;
 };
+
+
+export const getQuotation = async () => {
+  const { data } = await api.get("/api/cart/quotation");
+  return data.data;
+};

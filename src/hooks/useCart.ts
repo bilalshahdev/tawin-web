@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCart, addToCart, updateCartQuantity, removeFromCart } from "@/services/cart";
+import { getCart, addToCart, updateCartQuantity, removeFromCart, getQuotation } from "@/services/cart";
 import { toast } from "sonner";
 
 export const useCart = () => {
@@ -50,6 +50,18 @@ export const useRemoveFromCart = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to remove item");
+    },
+  });
+};
+
+export const useCartQuotation = () => {
+  return useMutation({
+    mutationFn: getQuotation,
+    onSuccess: () => {
+      toast.success("Quotation generated");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to generate quotation");
     },
   });
 };

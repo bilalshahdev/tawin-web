@@ -3,6 +3,7 @@ import { z } from "zod";
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
 export const productFormSchema = z.object({
+  productTag: z.string().trim().optional(),
   title: z.object({
     en: z.string().min(1, "Title in English is required"),
     ar: z.string().optional(),

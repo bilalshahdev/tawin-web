@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProducts, getProductBySlug, getProductsByCategory, addProduct, updateProduct, deleteProduct, getLowStockProducts, updateProductStock } from "@/services/products";
+import { getProducts, getProductBySlug, getProductsByCategory, addProduct, updateProduct, archiveProduct, restoreProduct, getLowStockProducts, updateProductStock, importProducts } from "@/services/products";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -47,7 +47,6 @@ export const useAddProduct = () => {
 
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) => updateProduct(id, formData),
@@ -61,17 +60,52 @@ export const useUpdateProduct = () => {
   });
 };
 
-export const useDeleteProduct = () => {
+export const useImportProducts = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: deleteProduct,
-    onSuccess: () => {
+    mutationFn: importProducts,
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product deleted successfully");
+      const summary = response?.data;
+      const failed = summary?.failed?.length || 0;
+      const message = "Import completed: " + (summary?.created || 0) + " created, " + (summary?.updated || 0) + " updated" + (failed ? ", " + failed + " failed" : "") + ".";
+      toast.success(message);
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete product.");
+      toast.error(error.response?.data?.message || "Failed to import products.");
+    },
+  });
+};
+
+export const useArchiveProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: archiveProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Product archived successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to archive product.");
+    },
+  });
+};
+
+export const useDeleteProduct = useArchiveProduct;
+
+export const useRestoreProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: restoreProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Product restored successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to restore product.");
     },
   });
 };

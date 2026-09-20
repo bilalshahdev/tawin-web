@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
     Plus,
@@ -9,7 +9,8 @@ import {
     FileText,
     CirclePlus,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Upload
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -18,7 +19,7 @@ import ProductTable from "@/components/tables/ProductTable";
 import MiniCard from "@/components/card/MiniCard";
 import { useTranslations } from "next-intl";
 import { useGetCategories } from "@/hooks/useCategories";
-import { useProducts } from "@/hooks/useProducts";
+import { useImportProducts, useProducts } from "@/hooks/useProducts";
 import { useDebounce } from "@/hooks/useDebounce";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -27,13 +28,57 @@ import CategoryDetailDialog from "@/components/dialog/CategoryDetailDialog";
 import { Category } from "@/types/category";
 import { RootState } from "@/store/store";
 import { exportReport } from "@/utils/reportExport";
+import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 const CATEGORY_PAGE_SIZE = 8;
+
+const parseCsv = (text: string) => {
+    const rows: string[][] = [];
+    let row: string[] = [];
+    let cell = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+            cell += '"';
+            i += 1;
+        } else if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+            row.push(cell.trim());
+            cell = "";
+        } else if ((char === "\n" || char === "\r") && !inQuotes) {
+            if (char === "\r" && next === "\n") i += 1;
+            row.push(cell.trim());
+            if (row.some(Boolean)) rows.push(row);
+            row = [];
+            cell = "";
+        } else {
+            cell += char;
+        }
+    }
+
+    row.push(cell.trim());
+    if (row.some(Boolean)) rows.push(row);
+
+    const [headers, ...body] = rows;
+    if (!headers?.length) return [];
+
+    return body.map((values) => headers.reduce<Record<string, string>>((acc, header, index) => {
+        if (header) acc[header.trim()] = values[index]?.trim() || "";
+        return acc;
+    }, {}));
+};
 
 const ProductList = () => {
     const t = useTranslations("translation");
     const router = useRouter();
     const auth = useSelector((state: RootState) => state.auth.staff);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [activeTab, setActiveTab] = useState("All Products");
     const [search, setSearch] = useState("");
@@ -44,6 +89,7 @@ const ProductList = () => {
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
     const debouncedSearch = useDebounce(search, 500);
+    const { mutate: importProducts, isPending: isImporting } = useImportProducts();
 
     const isStaff = auth?.role === "staff";
 
@@ -57,14 +103,14 @@ const ProductList = () => {
     const categoryTotalPages = categoriesData?.meta?.totalPages ?? 1;
 
     const queryParams = useMemo(() => {
-        const rawParams = {
+        return {
             featuredProducts: activeTab === "Featured Products" || undefined,
             reduced: activeTab === "Reduced" || undefined,
             outOfStock: activeTab === "Out of Stock" || undefined,
+            archived: activeTab === "Archived" || undefined,
             page,
             search: debouncedSearch || undefined,
         };
-        return rawParams;
     }, [activeTab, page, debouncedSearch]);
 
     const { data: productsData, isLoading: productsLoading, refetch, isFetching } = useProducts(queryParams);
@@ -93,18 +139,47 @@ const ProductList = () => {
         { id: "Featured Products", label: t("featuredProducts") },
         { id: "Reduced", label: t("reduced") },
         { id: "Out of Stock", label: t("outOfStock") },
+        { id: "Archived", label: "Archived" },
     ];
 
+    const handleImportFile = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";
+        if (!file) return;
+        const fileName = file.name.toLowerCase();
+        let rows: Record<string, string>[] = [];
+
+        if (fileName.endsWith(".csv")) {
+            const text = await file.text();
+            rows = parseCsv(text);
+        } else if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+            const buffer = await file.arrayBuffer();
+            const workbook = XLSX.read(buffer, { type: "array" });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            rows = XLSX.utils.sheet_to_json<Record<string, string>>(firstSheet, { defval: "" });
+        } else {
+            toast.error("Please upload a CSV or Excel file.");
+            return;
+        }
+        if (!rows.length) {
+            toast.error("The selected CSV file has no product rows.");
+            return;
+        }
+
+        importProducts(rows);
+    };
+
     const actions = [
-        { icon: <RefreshCcw className={cn("h-4 w-4", isFetching && "animate-spin")} />, color: "text-gray-500", onClick: () => refetch() },
-        { icon: <ArrowUpDown className="h-4 w-4" />, color: isReversed ? "text-aqua font-bold" : "text-gray-500", onClick: () => setIsReversed(!isReversed) },
-        { icon: <FileText className="h-4 w-4" />, color: "text-red-500", onClick: () => exportReport(t("productList"), displayedProducts) },
+        { icon: <RefreshCcw className={cn("h-4 w-4", isFetching && "animate-spin")} />, color: "text-gray-500", onClick: () => refetch(), disabled: false },
+        { icon: <ArrowUpDown className="h-4 w-4" />, color: isReversed ? "text-aqua font-bold" : "text-gray-500", onClick: () => setIsReversed(!isReversed), disabled: false },
+        { icon: <FileText className="h-4 w-4" />, color: "text-red-500", onClick: () => exportReport(t("productList"), displayedProducts), disabled: false },
     ];
 
     return (
         <div className="space-y-6 p-1">
-            {
-                canCategoryPost &&
+            <input ref={fileInputRef} type="file" accept=".csv,text/csv,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" className="hidden" onChange={handleImportFile} />
+
+            {canCategoryPost &&
                 <div className="flex items-center justify-end gap-3">
                     <Button variant="primary" className="w-32" onClick={() => setIsAddDialogOpen(true)} size="sm">
                         <Plus className="h-4 w-4 mr-2" /> {t('addCategory')}
@@ -112,8 +187,7 @@ const ProductList = () => {
                 </div>
             }
 
-            {
-                canCategoryGet &&
+            {canCategoryGet &&
                 <div>
                     <div className="flex items-center justify-end mb-3">
                         <div className="flex items-center gap-1.5">
@@ -142,10 +216,7 @@ const ProductList = () => {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <MiniCard
-                            data={categories}
-                            isLoading={categoriesLoading}
-                        />
+                        <MiniCard data={categories} isLoading={categoriesLoading} />
                     </div>
                 </div>
             }
@@ -176,15 +247,20 @@ const ProductList = () => {
                             <SearchInput
                                 value={search}
                                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                                placeholder={`${t("search")}...`}
+                                placeholder={t("search") + "..."}
                                 className="flex-1 md:w-[200px] lg:w-[240px]"
                             />
                             <div className="flex items-center gap-1 shrink-0">
                                 {actions.map((action, idx) => (
-                                    <Button key={idx} variant="outline" size="icon" onClick={action.onClick} className={cn("h-9 w-9 border-gray-200 bg-white shrink-0", action.color)}>
+                                    <Button key={idx} variant="outline" size="icon" onClick={action.onClick} disabled={action.disabled} className={cn("h-9 w-9 border-gray-200 bg-white shrink-0", action.color)}>
                                         {action.icon}
                                     </Button>
                                 ))}
+                                {canPost && (
+                                    <Button variant="outline" size="icon" disabled={isImporting} onClick={() => fileInputRef.current?.click()} className="h-9 w-9 border-gray-200 bg-white shrink-0 text-gray-500">
+                                        <Upload className={cn("h-4 w-4", isImporting && "animate-pulse")} />
+                                    </Button>
+                                )}
                             </div>
                         </div>
 
@@ -212,7 +288,6 @@ const ProductList = () => {
                 </CardContent>
             </Card>
 
-            {/* Dialogs */}
             <CategoryFormDialog open={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} />
 
             <CategoryDetailDialog

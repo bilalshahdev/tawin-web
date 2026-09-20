@@ -18,6 +18,7 @@ export default function AddProductPage() {
     const methods = useForm<ProductFormValues>({
         resolver: zodResolver(productFormSchema),
         defaultValues: {
+            productTag: "",
             title: { en: "", ar: "" },
             description: { en: "", ar: "" },
             price: "",
@@ -33,6 +34,7 @@ export default function AddProductPage() {
     const onSubmit = (values: ProductFormValues) => {
         const fd = new FormData();
 
+        if (values.productTag) fd.append("productTag", values.productTag);
         fd.append("title[en]", values.title.en);
         if (values.title.ar) fd.append("title[ar]", values.title.ar);
         fd.append("description[en]", values.description.en);

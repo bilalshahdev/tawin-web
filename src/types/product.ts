@@ -1,5 +1,6 @@
 export interface Product {
   _id: string
+  productTag?: string
   title: LocalizedString;
   category: Category;
   slug: string;
@@ -14,6 +15,9 @@ export interface Product {
   colors?: string[]
   remainingPieces?: number
   isNewArrival?: boolean
+  isFeatured?: boolean
+  isArchived?: boolean
+  archivedAt?: string | null
   discount?: number
   reviewCount?: number
   isListView?: boolean,

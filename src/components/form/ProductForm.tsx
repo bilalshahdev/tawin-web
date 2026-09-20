@@ -82,6 +82,16 @@ const ProductForm = ({ isEdit = false }: any) => {
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label>{t("productCode")}</Label>
+            <Input
+              {...register("productTag")}
+              placeholder="e.g. PROD-001"
+              className={"rounded-md " + ((errors as any).productTag ? "border-red-500" : "")}
+            />
+            <ErrorMessage error={(errors as any).productTag} />
+          </div>
+
           {/* Description EN / AR */}
           <div className="space-y-2">
             <div className="flex items-center">

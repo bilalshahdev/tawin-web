@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
-import { Ticket, X } from "lucide-react"
+import { FileText, Ticket } from "lucide-react"
 import { useState } from "react"
 import { LoginDialog } from "@/components/dialog/LoginDialog"
 import { InactiveProfileDialog } from "@/components/dialog/InactiveProfileDialog"
 import { useUserProfile } from "@/hooks/useAuth"
+import { useCartQuotation } from "@/hooks/useCart"
 
 type PaymentSummaryProps = {
     subtotal: number
@@ -22,10 +23,24 @@ const PaymentSummary = ({ subtotal, total, discountAmount, appliedCoupon, setSte
     
     const [loginOpen, setLoginOpen] = useState(false);
     const [inactiveOpen, setInactiveOpen] = useState(false);
+    const [quotation, setQuotation] = useState<any>(null);
+    const { mutate: generateQuotation, isPending: isGeneratingQuotation } = useCartQuotation();
 
     // User Profile Hook to check account status verification
     const { data: userProfile } = useUserProfile();
     const isVerified = userProfile?.data?.isVerified ?? false;
+
+    const handleQuotationAction = () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setLoginOpen(true);
+            return;
+        }
+
+        generateQuotation(undefined, {
+            onSuccess: (data) => setQuotation(data),
+        });
+    };
 
     const handleCheckoutAction = () => {
         const token = localStorage.getItem("token");
@@ -105,13 +120,38 @@ const PaymentSummary = ({ subtotal, total, discountAmount, appliedCoupon, setSte
                         <span className="text-xl font-semibold text-gray-900">{currencySymbol}{total.toFixed(2)}</span>
                     </div>
                 </div>
+                <div className="space-y-3">
+                    <Button
+                        onClick={handleCheckoutAction}
+                        variant="primary"
+                    >
+                        {t("checkout")}
+                    </Button>
 
-                <Button
-                    onClick={handleCheckoutAction}
-                    variant="primary"
-                >
-                    {t("checkout")}
-                </Button>
+                    <Button
+                        type="button"
+                        onClick={handleQuotationAction}
+                        disabled={isGeneratingQuotation}
+                        variant="outline"
+                        className="w-full rounded-full gap-2"
+                    >
+                        <FileText className="h-4 w-4" />
+                        {isGeneratingQuotation ? "Generating..." : "Generate Quotation"}
+                    </Button>
+                </div>
+
+                {quotation && (
+                    <div className="rounded-xl border border-aqua/30 bg-aqua/5 p-4 text-sm space-y-2">
+                        <div className="flex items-center justify-between gap-3">
+                            <span className="text-gray-500">Quotation</span>
+                            <span className="font-semibold text-gray-900">{quotation.quotationNumber}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                            <span className="text-gray-500">Total</span>
+                            <span className="font-semibold text-gray-900">{currencySymbol}{Number(quotation.totalAmount || 0).toFixed(2)}</span>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
